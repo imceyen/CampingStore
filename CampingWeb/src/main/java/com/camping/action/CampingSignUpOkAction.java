@@ -14,18 +14,6 @@ public class CampingSignUpOkAction implements Action {
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		// 회원가입 폼 페이지에서 넘어온 데이터를 테이블에 저장
-		/*
-		 *  customer_no NUMBER PRIMARY KEY,             -- 고객 번호
-    customer_id VARCHAR2(30) UNIQUE NOT NULL,   -- 고객 아이디 (아이디 중복 방지)
-    password VARCHAR2(100) NOT NULL,            -- 고객 비밀번호
-    name VARCHAR2(50) NOT NULL,                 -- 고객 이름
-    birth_date DATE,                            -- 고객 생년월일
-    gender CHAR(1),                             -- 고객 성별 'M' or 'F'         
-    phone VARCHAR2(20),                         -- 고객 전화번호
-    address VARCHAR2(200)                       -- 고객 주소
-
-		 */
 		
 		String customer_id = request.getParameter("cus_id").trim();
 		String password = request.getParameter("cus_pwd").trim();

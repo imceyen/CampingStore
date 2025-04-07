@@ -24,7 +24,12 @@ public class CustomerLoginOkAction implements Action {
 	            // 로그인 성공
 	            HttpSession session = request.getSession();
 	            session.setAttribute("cus_id", id);
+	            
+	            String name = dao.getCustomerName(id);  // DAO에서 이름 가져오는 메서드를 만들어야 해
+	            session.setAttribute("cus_name", name);
+	            
 	            ActionForward forward = new ActionForward();
+	            
 	            forward.setRedirect(true);
 	            forward.setPath("main.jsp");
 	            return forward;

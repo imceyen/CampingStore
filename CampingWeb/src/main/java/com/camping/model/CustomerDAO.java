@@ -209,6 +209,37 @@ public class CustomerDAO {
 	}
 	
 	
+	// 해당 id에 해당하는 회원 이름을 가져오는 메서드
+	public String getCustomerName(String id) {
+	    String name = null;
+	    
+	    try {
+	        openConn();
+	        
+	        sql = "SELECT name FROM customer WHERE customer_id = ?";
+	        
+	        pstmt = con.prepareStatement(sql);
+	        
+	        pstmt.setString(1, id);
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            name = rs.getString("name");
+	        }
+	        
+	    } catch(Exception e) {
+	        e.printStackTrace();
+	    
+	    } finally {
+	    
+	    	closeConn(rs, pstmt, con);
+	    }
+	    
+	    return name;
+	}
+	
+	
 	
 	
 }
