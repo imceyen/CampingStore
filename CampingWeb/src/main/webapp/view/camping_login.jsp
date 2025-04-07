@@ -31,7 +31,7 @@
 		<br>
 
 		<!-- 로그인 폼 -->
-		<form action="LoginServlet" method="post" class="w-96 space-y-6">
+		<form action="login.go" method="post" class="w-96 space-y-6">
 			
 			<!-- 아이디 -->
 			<input type="text" name="id" id="id" required

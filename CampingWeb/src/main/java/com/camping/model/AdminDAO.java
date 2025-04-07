@@ -35,7 +35,7 @@ public class AdminDAO {
 	// private으로 바꾸어 주어야 한다.
 	// 즉, 외부에서 직접적으로 기본생성자를 접근하여
 	// 호출하지 못하도록 하는 방법이다.
-	private AdminDAO() {
+	public AdminDAO() {
 	} // 기본 생성자
 
 	// 3단계 : 기본 생성자 대신에 싱글턴 객체를 return 해 주는
@@ -147,6 +147,87 @@ public class AdminDAO {
 
 	    return result;
 	}
+	
+	// 관리자 로그인 확인
+	public AdminDTO loginAdmin(String adminId, String password) {
+	    AdminDTO dto = null;
+
+	    try {
+	        openConn();
+	        sql = "SELECT * FROM admin WHERE admin_id = ? AND password = ?";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setString(1, adminId);
+	        pstmt.setString(2, password);
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	        	dto = new AdminDTO();
+	        	dto.setAdminId(rs.getString("admin_id"));
+	        	dto.setPassword(rs.getString("password"));
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeConn(rs, pstmt, con);
+	    }
+
+	    return dto;
+	}
+	
+	// 가장 큰 상품 번호 조회
+    public int getMaxProductNo() {
+        int maxProductNo = 0;
+        String sql = "SELECT MAX(product_no) FROM cam_product"; // cam_product 테이블에서 가장 큰 product_no 조회
+        try {
+            pstmt = con.prepareStatement(sql);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                maxProductNo = rs.getInt(1); // 첫 번째 컬럼(가장 큰 상품 번호)
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConn(rs, pstmt, con);
+        }
+        return maxProductNo;
+    }
+
+    // 상품 추가 메서드
+    public boolean insertProduct(ProductDTO productDTO) {
+        boolean success = false;
+        String sql = "INSERT INTO cam_product (product_no, category_no, product_name, input_price, output_price, stock_qty, sold_qty, is_sold_out, product_image, detail_image1, detail_image2, detail_image3, detail_image4) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try {
+            pstmt = con.prepareStatement(sql);
+
+            pstmt.setInt(1, productDTO.getProduct_no());
+            pstmt.setInt(2, productDTO.getCategory_no());
+            pstmt.setString(3, productDTO.getProduct_name());
+            pstmt.setInt(4, productDTO.getInput_price());
+            pstmt.setInt(5, productDTO.getOutput_price());
+            pstmt.setInt(6, productDTO.getStock_qty());
+            pstmt.setInt(7, productDTO.getSold_qty());
+            pstmt.setString(8, productDTO.getIs_sold_out());
+            pstmt.setString(9, productDTO.getProduct_image());
+            pstmt.setString(10, productDTO.getDetail_image1());
+            pstmt.setString(11, productDTO.getDetail_image2());
+            pstmt.setString(12, productDTO.getDetail_image3());
+            pstmt.setString(13, productDTO.getDetail_image4());
+
+            int rowsAffected = pstmt.executeUpdate();
+
+            if (rowsAffected > 0) {
+                success = true;
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            closeConn(pstmt, con);
+        }
+        return success;
+    }
 	
 	
 }
