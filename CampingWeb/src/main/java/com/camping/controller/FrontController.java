@@ -37,8 +37,10 @@ public class FrontController extends HttpServlet {
 		String path = request.getContextPath();
 		System.out.println("Path >>> " + path);
 		
-		String command = uri.substring(path.length() + 1);
-		System.out.println("Command >>> " + command);
+	
+		String command = uri.substring(path.length());
+		command = command.startsWith("/") ? command.substring(1) : command;
+		command = command.trim();
 	
 		Action action = null;
 		
