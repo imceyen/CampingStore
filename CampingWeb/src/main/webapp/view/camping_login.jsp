@@ -34,13 +34,13 @@
 		<form action="LoginServlet" method="post" class="w-96 space-y-6">
 			
 			<!-- 아이디 -->
-			<input type="text" name="user_id" id="user_id" required
+			<input type="text" name="id" id="id" required
 				placeholder="아이디"
 				class="w-full border-0 border-b border-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black" />
 			<br><br>
 			
 			<!-- 비밀번호 -->
-			<input type="password" name="user_pwd" id="user_pwd" required
+			<input type="password" name="pwd" id="pwd" required
 				placeholder="비밀번호"
 				class="w-full border-0 border-b border-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black" />
 			<br><br>
