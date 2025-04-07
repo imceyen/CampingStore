@@ -29,6 +29,7 @@
     <!-- 로그인 안 했을 때 -->
     <a href="<%=request.getContextPath()%>/customer_login.go" class="text-sm hover:underline">로그인</a>
     <a href="<%=request.getContextPath()%>/camping_signUp.go" class="text-sm hover:underline">회원가입</a>
+  
   <% } else { %>
     <!-- 로그인 했을 때 -->
     <span class="text-sm font-semibold"><%= cusName %> 님</span>
