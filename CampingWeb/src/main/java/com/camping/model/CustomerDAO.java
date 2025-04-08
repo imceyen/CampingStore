@@ -278,4 +278,75 @@ public class CustomerDAO {
 	} // checkPassword() end
 	
 	
+	// 회원 정보 불러오는 메서드
+	public CustomerDTO getCustomerInfo(String id) {
+		
+		CustomerDTO dto = null;
+		
+		
+		try {
+
+			openConn();
+			
+			sql = "select * from customer where customer_id=?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+	            dto = new CustomerDTO();
+	            dto.setCustomer_no(rs.getInt("customer_no"));
+	            dto.setCustomer_id(rs.getString("customer_id"));
+	            dto.setPassword(rs.getString("password"));
+	            dto.setName(rs.getString("name"));
+	            dto.setBirth_Date(rs.getString("birth_Date"));
+	            dto.setGender(rs.getString("gender"));
+	            dto.setPhone(rs.getString("phone"));
+	            dto.setAddress(rs.getString("address"));
+	        }
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(rs, pstmt, con);
+		}
+		
+		return dto;
+	}	// getCustomerInfo() end
+	
+	
+	// 정보 수정 메서드
+	public int updateCustomerInfo(String id, String phone, String address) {
+		
+		int result = 0;
+
+		try {
+			
+			openConn();
+			
+			sql = "update customer set phone = ?, address = ? where customer_id = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, phone);
+			pstmt.setString(2, address);
+			pstmt.setString(3, id);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+	
+    return result;
+	
+	} //updateCustomerInfo() end
+
 }

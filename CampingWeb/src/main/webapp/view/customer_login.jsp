@@ -29,7 +29,7 @@
             로그인
         </button>
 
-        <button type="button" onclick="location.href='customer_join.go';"
+        <button type="button" onclick="location.href='camping_signUp.go';"
             class="w-full border border-black text-black py-3 rounded hover:bg-gray-100">
             회원 가입
         </button>
