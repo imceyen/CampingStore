@@ -1,5 +1,6 @@
 package com.camping.model;
 
+import java.lang.foreign.SymbolLookup;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -34,6 +35,7 @@ public class CustomerDAO {
 		//        private으로 바꾸어 주어야 한다.
 		//        즉, 외부에서 직접적으로 기본생성자를 접근하여
 		//        호출하지 못하도록 하는 방법이다.
+		
 		private CustomerDAO() {  }  // 기본 생성자
 			
 		// 3단계 : 기본 생성자 대신에 싱글턴 객체를 return 해 주는
@@ -240,6 +242,40 @@ public class CustomerDAO {
 	}
 	
 	
+	// 회원 정보 변경 전 비밀번호 재확인 메서드
+	
+	public boolean checkPassword(String id, String pwd) {
+		
+		boolean result = false;
+
+		
+		try {
+			
+			openConn();
+			
+			sql = "select * from customer where customer_id=? and password = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			pstmt.setString(2, pwd);
+			
+			rs = pstmt.executeQuery();
+			
+			if (rs.next()) {
+				result = true; // 비밀번호 일치
+			}
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(rs, pstmt, con);
+		}
+		
+		return result;
+		
+	} // checkPassword() end
 	
 	
 }

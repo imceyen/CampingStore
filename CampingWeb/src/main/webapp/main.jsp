@@ -29,14 +29,13 @@
     <!-- 로그인 안 했을 때 -->
     <a href="<%=request.getContextPath()%>/customer_login.go" class="text-sm hover:underline">로그인</a>
     <a href="<%=request.getContextPath()%>/camping_signUp.go" class="text-sm hover:underline">회원가입</a>
-  
   <% } else { %>
     <!-- 로그인 했을 때 -->
     <span class="text-sm font-semibold"><%= cusName %> 님</span>
-    <a href="<%=request.getContextPath()%>/logout.go" class="text-sm hover:underline">로그아웃</a>
+    <a href="<%=request.getContextPath()%>/customer_logout.go" class="text-sm hover:underline">로그아웃</a>
   <% } %>
   
-    <a href="#" class="text-sm hover:underline">마이페이지</a>
+    <a href="<%=request.getContextPath()%>/customer_mypage.go" class="text-sm hover:underline">마이페이지</a>
     <a href="#" class="text-sm hover:underline">장바구니</a>
   </nav>
 </header>
