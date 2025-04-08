@@ -1,14 +1,17 @@
 package com.camping.model;
 
-import java.sql.*;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
-
-public class AdminDAO {
+public class CategoryDAO {
 
 	// DB와 연결하는 객체
 	Connection con = null;
@@ -23,26 +26,26 @@ public class AdminDAO {
 	String sql = null;
 	
 	
-	// AdminDAO 객체를 싱글턴 방식으로 만들어 보자.
-	// 1단계 : AdminDAO 객체를 정적(static) 멤버로
+	// CategoryDAO 객체를 싱글턴 방식으로 만들어 보자.
+	// 1단계 : CategoryDAO 객체를 정적(static) 멤버로
 	//        선언을 해 주어야 한다.
-	private static AdminDAO instance = null;
+	private static CategoryDAO instance = null;
 	
 	// 2단계 : 싱글턴 방식으로 객체를 만들기 위해서는 우선저긍로
 	//        기본생성자의 접근제어자를 public이 아닌
 	//        private으로 바꾸어 주어야 한다.
 	//        즉, 외부에서 직접적으로 기본생성자를 접근하여
 	//        호출하지 못하도록 하는 방법이다.
-	private AdminDAO() {  }  // 기본 생성자
+	private CategoryDAO() {  }  // 기본 생성자
 	
 	// 3단계 : 기본 생성자 대신에 싱글턴 객체를 return 해 주는
 	//        getInstance() 라는 메서드를 만들어서 해당
 	//        getInstance() 메서드를 외부에서 접근할 수 
 	//        있도록 해 주면 됨.
-	public static AdminDAO getInstance() {
+	public static CategoryDAO getInstance() {
 		
 		if(instance == null) {
-			instance = new AdminDAO();
+			instance = new CategoryDAO();
 		}
 		
 		return instance;
@@ -127,36 +130,36 @@ public class AdminDAO {
 	}  // closeConn() 메서드 end
 	
 	
-	
-	// 관리자 로그인 화면에서 입력한 아이디와 비밀번호로
-	// 관리자인지 여부를 확인하는 메서드.
-	public int adminCheck(String id, String pwd) {
+	// 카테고리 테이블에 카테고리를 추가하는 메서드.
+	public int insertCategory(CategoryDTO dto) {
 		
-		int result = 0;
+		int result = 0, count = 0;
 		
 		
 		try {
 			openConn();
 			
-			sql = "select * from admin "
-					+ " where admin_id = ?";
+			sql = "select max(category_no) "
+					+ " from cam_category";
 			
 			pstmt = con.prepareStatement(sql);
-			
-			pstmt.setString(1, id);
 			
 			rs = pstmt.executeQuery();
 			
 			if(rs.next()) {
 				
-				if(pwd.equals(rs.getString("admin_pwd"))) {
-					// 관리자인 경우(아이디와 비밀번호가 일치하는 관리자)
-					result = 1;
-				}else {
-					// 비밀번호가 틀린 경우(아이디는 일치하나 비밀번호가 틀린 경우)
-					result = -1;
-				}
+				count = rs.getInt(1) + 1;
 			}
+			
+			sql = "insert into cam_category "
+					+ " values(?, ?)";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, count);
+			pstmt.setString(2, dto.getCategory_name());
+			
+			result = pstmt.executeUpdate();
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -165,34 +168,35 @@ public class AdminDAO {
 		}
 		
 		return result;
-	}  // adminCheck() 메서드 end
+	}  // insertCategory() 메서드 end
 	
 	
 	
-	// 관리자에 대한 상세 정보를 조회하는 메서드.
-	public AdminDTO getAdmin(String id) {
+	// 카테고리 테이블에 있는 전체 리스트를 조회하는 메서드.
+	public List<CategoryDTO> getCategoryList() {
 		
-		AdminDTO dto = null;
+		List<CategoryDTO> list = 
+					new ArrayList<CategoryDTO>();
 		
 		
 		try {
 			openConn();
 			
-			sql = "select * from admin "
-					+ " where admin_id = ?";
+			sql = "select * from cam_category "
+					+ " order by category_no desc"; 
 			
 			pstmt = con.prepareStatement(sql);
 			
-			pstmt.setString(1, id);
-			
 			rs = pstmt.executeQuery();
 			
-			if(rs.next()) {
+			while(rs.next()) {
 				
-				dto = new AdminDTO();
+				CategoryDTO dto = new CategoryDTO();
 				
-				dto.setAdmin_id(rs.getString(1));
-				dto.setAdmin_pwd(rs.getString(2));
+				dto.setCategory_no(rs.getInt("category_no"));
+				dto.setCategory_name(rs.getString("category_name"));
+				
+				list.add(dto);
 			
 			}
 			
@@ -202,15 +206,69 @@ public class AdminDAO {
 			closeConn(rs, pstmt, con);
 		}
 		
-		return dto;
-	}  // getAdmin() 메서드 end
+		return list;
+	}  // getCategoryList() 메서드 end
+	
+	
+	
+	// 카테고리 번호에 해당하는 카테고리를 DB에서 삭제하는 메서드.
+	public int deleteCategory(int no) {
+		
+		int result = 0;
+		
+		
+		try {
+			openConn();
+			
+			sql = "delete from cam_category "
+					+ " where category_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, no);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+	}  // deleteCategory() 메서드 end
+	
+	
+	// 카테고리 코드 삭제 시 카테고리 번호 재작업 하는 메서드.
+	public void updateSequence(int no) {
+		
+		
+		
+		try {
+			openConn();
+			
+			sql = "update cam_category set "
+					+ " category_no = category_no - 1 "
+					+ " where category_no > ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, no);
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		
+		
+	}  // updateSequence() 메서드 end
+	
 	
 }
-
-
-
-
-
 
 
 

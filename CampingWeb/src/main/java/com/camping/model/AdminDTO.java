@@ -1,23 +1,27 @@
 package com.camping.model;
 
 public class AdminDTO {
+
+	private String admin_id;
+	private String admin_pwd;
 	
-	private String adminId;
-    private String password;
-
-    public String getAdminId() {
-        return adminId;
-    }
-    public void setAdminId(String adminId) {
-        this.adminId = adminId;
-    }
-    public String getPassword() {
-        return password;
-    }
-    public void setPassword(String password) {
-        this.password = password;
-    }
-    
-    
-
+	
+	public String getAdmin_id() {
+		return admin_id;
+	}
+	
+	public void setAdmin_id(String admin_id) {
+		this.admin_id = admin_id;
+	}
+	
+	public String getAdmin_pwd() {
+		return admin_pwd;
+	}
+	
+	public void setAdmin_pwd(String admin_pwd) {
+		this.admin_pwd = admin_pwd;
+	}
+	
+	
+	
 }

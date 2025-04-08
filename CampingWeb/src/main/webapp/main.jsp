@@ -22,10 +22,12 @@
 
 		<!-- 메뉴: 오른쪽 정렬 -->
 		<nav class="ml-auto space-x-6">
-			<a href="view/camping_login.jsp" class="text-sm hover:underline">로그인</a>
+			<a href="#" class="text-sm hover:underline">로그인</a>
 			<a href="#" class="text-sm hover:underline">회원가입</a> <a href="#"
 				class="text-sm hover:underline">마이페이지</a> <a href="#"
 				class="text-sm hover:underline">장바구니</a>
+				<a href="admin_main.go"
+				class="text-sm hover:underline">관리자</a>
 		</nav>
 	</header>
 

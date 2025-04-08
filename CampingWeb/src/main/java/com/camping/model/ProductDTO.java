@@ -1,7 +1,6 @@
 package com.camping.model;
 
 public class ProductDTO {
-	
 	private int product_no;
 	private int category_no;
 	private String product_name;
@@ -10,45 +9,15 @@ public class ProductDTO {
 	private int stock_qty;
 	private int sold_qty;
 	private String is_sold_out;
+	private String is_rent_available;
+	private int rental_unit_price;
 	private String product_image;
 	private String detail_image1;
 	private String detail_image2;
 	private String detail_image3;
 	private String detail_image4;
 	
-	public String getProduct_image() {
-		return product_image;
-	}
-	public void setProduct_image(String product_image) {
-		this.product_image = product_image;
-	}
-	public String getDetail_image1() {
-		return detail_image1;
-	}
-	public void setDetail_image1(String detail_image1) {
-		this.detail_image1 = detail_image1;
-	}
-	public String getDetail_image2() {
-		return detail_image2;
-	}
-	public void setDetail_image2(String detail_image2) {
-		this.detail_image2 = detail_image2;
-	}
-	public String getDetail_image3() {
-		return detail_image3;
-	}
-	public void setDetail_image3(String detail_image3) {
-		this.detail_image3 = detail_image3;
-	}
-	public String getDetail_image4() {
-		return detail_image4;
-	}
-	public void setDetail_image4(String detail_image4) {
-		this.detail_image4 = detail_image4;
-	}
-	public void setIs_sold_out(String is_sold_out) {
-		this.is_sold_out = is_sold_out;
-	}
+	
 	public int getProduct_no() {
 		return product_no;
 	}
@@ -94,7 +63,51 @@ public class ProductDTO {
 	public String getIs_sold_out() {
 		return is_sold_out;
 	}
-
+	public void setIs_sold_out(String is_sold_out) {
+		this.is_sold_out = is_sold_out;
+	}
+	public String getIs_rent_available() {
+		return is_rent_available;
+	}
+	public void setIs_rent_available(String is_rent_available) {
+		this.is_rent_available = is_rent_available;
+	}
+	public int getRental_unit_price() {
+		return rental_unit_price;
+	}
+	public void setRental_unit_price(int rental_unit_price) {
+		this.rental_unit_price = rental_unit_price;
+	}
+	public String getProduct_image() {
+		return product_image;
+	}
+	public void setProduct_image(String product_image) {
+		this.product_image = product_image;
+	}
+	public String getDetail_image1() {
+		return detail_image1;
+	}
+	public void setDetail_image1(String detail_image1) {
+		this.detail_image1 = detail_image1;
+	}
+	public String getDetail_image2() {
+		return detail_image2;
+	}
+	public void setDetail_image2(String detail_image2) {
+		this.detail_image2 = detail_image2;
+	}
+	public String getDetail_image3() {
+		return detail_image3;
+	}
+	public void setDetail_image3(String detail_image3) {
+		this.detail_image3 = detail_image3;
+	}
+	public String getDetail_image4() {
+		return detail_image4;
+	}
+	public void setDetail_image4(String detail_image4) {
+		this.detail_image4 = detail_image4;
+	}
 	
 	
 	
