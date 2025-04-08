@@ -7,7 +7,7 @@
     String id = (String) session.getAttribute("cus_id");
     String name = (String) session.getAttribute("cus_name");
 
-    CustomerDAO dao = com.camping.model.CustomerDAO.getInstance();
+    CustomerDAO dao = CustomerDAO.getInstance();
     CustomerDTO dto = dao.getCustomerInfo(id);  // 회원 정보 가져오기
 %>
 

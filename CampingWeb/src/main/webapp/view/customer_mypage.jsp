@@ -29,7 +29,12 @@
 <title>마이페이지</title>
 <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-white text-black font-sans">
+<body class="bg-white font-sans text-black">
+
+    <!-- 로고 -->
+    <header class="text-center py-6 border-b">
+        <h1 class="text-3xl font-bold"><span class="text-black">PacknGo</span></h1>
+    </header>
 
     <main class="max-w-4xl mx-auto mt-12">
 
@@ -71,8 +76,8 @@
             <!-- 회원 정보 -->
             <div>
                 <p class="font-bold mb-3">회원 정보</p>
-                <p class="mb-1"><a href="customer_check_pwd_ok.go">회원 정보 변경</a></p>
-                <p class="mb-1"><a href="#">회원 탈퇴</a></p>
+                <p class="mb-1"><a href="customer_check_pwd.go">회원 정보 변경</a></p>
+                <p class="mb-1"><a href="customer_check_pwd.go?target=delete">회원 탈퇴</a></p>
                 <p><a href="customer_logout.go">로그아웃</a></p>
             </div>
         </div>

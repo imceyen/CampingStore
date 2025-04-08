@@ -124,7 +124,8 @@ public class CustomerDAO {
 				
 			}  // closeConn() 메서드 end
 	
-		
+
+//-------------------------------------------------------------------------------------------------------------------------
 	
 		
 	// 회원가입한 정보를 회원 정보에 추가하는 메서드
@@ -174,6 +175,10 @@ public class CustomerDAO {
 	}// joinCamping() end
 	
 	
+//-------------------------------------------------------------------------------------------------------------------------
+	
+	
+	// 로그인
 	public int customerLogin(String id, String pwd) {
 		
 		int result = 1;
@@ -208,7 +213,11 @@ public class CustomerDAO {
 		}
 		
 		return result;
-	}
+		
+	} // customerLogin() end
+	
+
+//-------------------------------------------------------------------------------------------------------------------------
 	
 	
 	// 해당 id에 해당하는 회원 이름을 가져오는 메서드
@@ -239,11 +248,14 @@ public class CustomerDAO {
 	    }
 	    
 	    return name;
-	}
+	    
+	} // getCustomerName() end
+
 	
+//-------------------------------------------------------------------------------------------------------------------------
+
 	
-	// 회원 정보 변경 전 비밀번호 재확인 메서드
-	
+	// 회원 정보 변경 or 회원 탈퇴 전 비밀번호 재확인 메서드
 	public boolean checkPassword(String id, String pwd) {
 		
 		boolean result = false;
@@ -276,6 +288,9 @@ public class CustomerDAO {
 		return result;
 		
 	} // checkPassword() end
+
+
+//-------------------------------------------------------------------------------------------------------------------------
 	
 	
 	// 회원 정보 불러오는 메서드
@@ -317,7 +332,10 @@ public class CustomerDAO {
 		
 		return dto;
 	}	// getCustomerInfo() end
+
 	
+//-------------------------------------------------------------------------------------------------------------------------
+
 	
 	// 정보 수정 메서드
 	public int updateCustomerInfo(String id, String phone, String address) {
@@ -348,5 +366,105 @@ public class CustomerDAO {
     return result;
 	
 	} //updateCustomerInfo() end
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
+	// 탈퇴할 회원의 회원 번호 조회
+	public int getCustomerNo(String id) {
+		
+		int no = -1;
+
+		try {
+			openConn();
+			
+			sql = "select customer_no from customer where customer_id = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			
+			rs = pstmt.executeQuery();
+			
+			
+			if (rs.next()) {
+				no = rs.getInt("customer_no");
+				
+			} // if end
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(rs, pstmt, con);
+		}
+		
+		return no;
+		
+	} // getCustomerNo() end
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+	
+	
+	// 회원 탈퇴 (해당 회원 정보 삭제)
+	public int deleteCustomer(String id) {
+		
+		int result = 0;
+
+		try {		
+			openConn();
+			
+			sql = "delete from customer where customer_id = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, id);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+		
+	} // deleteCustomer() end
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+	
+	
+	// 탈퇴한 회원의 이후 번호 앞당기기
+	public void updateAfterDelete(int no) {
+		
+		try {
+			openConn();
+			
+			sql = "update customer set customer_no = customer_no - 1 where customer_no > ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, no);
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+	} // updateAfterDelete
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
 
 }
