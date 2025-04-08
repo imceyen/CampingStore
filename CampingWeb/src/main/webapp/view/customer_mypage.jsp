@@ -70,6 +70,7 @@
             <!-- 고객센터 -->
 			<div>
     			<p class="font-bold mb-3">고객센터</p>
+    			<p><a href="inquiry_write.go">1:1 문의</a></p>
     			<p><a href="#">1:1 문의 내역</a></p>
 			</div>
 
