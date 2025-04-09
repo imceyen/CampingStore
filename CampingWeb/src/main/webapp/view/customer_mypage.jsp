@@ -63,7 +63,7 @@
             <!-- 쇼핑 정보 -->
             <div>
                 <p class="font-bold mb-3">나의 쇼핑 정보</p>
- 				<p class="mb-1"><a href="#">주문 배송 조회</a></p>
+ 				<p class="mb-1"><a href="#">구매 내역 조회</a></p>
     			<p><a href="#">구매 후기</a></p>
             </div>
 
@@ -71,7 +71,7 @@
 			<div>
     			<p class="font-bold mb-3">고객센터</p>
     			<p><a href="inquiry_write.go">1:1 문의</a></p>
-    			<p><a href="#">1:1 문의 내역</a></p>
+    			<p><a href="inquiry_list.go">1:1 문의 내역</a></p>
 			</div>
 
             <!-- 회원 정보 -->
