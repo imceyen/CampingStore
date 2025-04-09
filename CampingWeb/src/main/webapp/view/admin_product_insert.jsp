@@ -12,6 +12,9 @@
 
     <!-- 헤더 -->
     <header class="w-full border-b py-4 px-6 relative flex items-center bg-black">
+        <div>
+			<a href="javascript:history.back()" class="text-white text-sm hover:underline">이전으로</a>
+		</div>
         <h1 class="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold text-white">PacknGo Manager</h1>
         <nav class="ml-auto space-x-6">
             <a href="../logout.go" class="text-sm text-white hover:underline">로그아웃</a>

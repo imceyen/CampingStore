@@ -44,11 +44,9 @@ public class AdminProductModifyOkAction implements Action {
 
 		int stock_qty = Integer.parseInt(multi.getParameter("stock_qty").trim());
 
-		int sold_qty = Integer.parseInt(multi.getParameter("sold_qty").trim());
-
 		String is_sold_out = multi.getParameter("is_sold_out").trim();
 
-		String is_rental_available = multi.getParameter("is_rental_available").trim();
+		String is_rent_available = multi.getParameter("is_rent_available").trim();
 
 		int rental_unit_price = Integer.parseInt(multi.getParameter("rental_unit_price").trim());
 
@@ -70,11 +68,11 @@ public class AdminProductModifyOkAction implements Action {
 		dto.setInput_price(input_price);
 		dto.setOutput_price(output_price);
 		dto.setStock_qty(stock_qty);
-		dto.setSold_qty(sold_qty);
 		dto.setIs_sold_out(is_sold_out);
 		dto.setIs_rent_available(is_rent_available);
-		dto.setProduct_image(product_image);
 		dto.setRental_unit_price(rental_unit_price);
+		dto.setProduct_image(product_image);
+		
 
 		ProductDAO dao = ProductDAO.getInstance();
 
@@ -84,12 +82,12 @@ public class AdminProductModifyOkAction implements Action {
 
 		if (check > 0) {
 			out.println("<script>");
-			out.println("alert('상품 정보 수정 성공!!!')");
+			out.println("alert('상품이 추가되었습니다.')");
 			out.println("location.href='admin_product_list.go'");
 			out.println("</script>");
 		} else {
 			out.println("<script>");
-			out.println("alert('상품 정보 수정 실패~~~')");
+			out.println("alert('※ 상품이 추가되지 않았습니다. ※')");
 			out.println("history.back()");
 			out.println("</script>");
 		}

@@ -130,48 +130,6 @@ public class CategoryDAO {
 	}  // closeConn() 메서드 end
 	
 	
-	// 카테고리 테이블에 카테고리를 추가하는 메서드.
-	public int insertCategory(CategoryDTO dto) {
-		
-		int result = 0, count = 0;
-		
-		
-		try {
-			openConn();
-			
-			sql = "select max(category_no) "
-					+ " from cam_category";
-			
-			pstmt = con.prepareStatement(sql);
-			
-			rs = pstmt.executeQuery();
-			
-			if(rs.next()) {
-				
-				count = rs.getInt(1) + 1;
-			}
-			
-			sql = "insert into cam_category "
-					+ " values(?, ?)";
-			
-			pstmt = con.prepareStatement(sql);
-			
-			pstmt.setInt(1, count);
-			pstmt.setString(2, dto.getCategory_name());
-			
-			result = pstmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConn(rs, pstmt, con);
-		}
-		
-		return result;
-	}  // insertCategory() 메서드 end
-	
-	
-	
 	// 카테고리 테이블에 있는 전체 리스트를 조회하는 메서드.
 	public List<CategoryDTO> getCategoryList() {
 		
@@ -211,61 +169,7 @@ public class CategoryDAO {
 	
 	
 	
-	// 카테고리 번호에 해당하는 카테고리를 DB에서 삭제하는 메서드.
-	public int deleteCategory(int no) {
-		
-		int result = 0;
-		
-		
-		try {
-			openConn();
-			
-			sql = "delete from cam_category "
-					+ " where category_no = ?";
-			
-			pstmt = con.prepareStatement(sql);
-			
-			pstmt.setInt(1, no);
-			
-			result = pstmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConn(pstmt, con);
-		}
-		
-		return result;
-	}  // deleteCategory() 메서드 end
 	
-	
-	// 카테고리 코드 삭제 시 카테고리 번호 재작업 하는 메서드.
-	public void updateSequence(int no) {
-		
-		
-		
-		try {
-			openConn();
-			
-			sql = "update cam_category set "
-					+ " category_no = category_no - 1 "
-					+ " where category_no > ?";
-			
-			pstmt = con.prepareStatement(sql);
-			
-			pstmt.setInt(1, no);
-			
-			pstmt.executeUpdate();
-			
-		} catch (SQLException e) {
-			e.printStackTrace();
-		} finally {
-			closeConn(pstmt, con);
-		}
-		
-		
-		
-	}  // updateSequence() 메서드 end
 	
 	
 }

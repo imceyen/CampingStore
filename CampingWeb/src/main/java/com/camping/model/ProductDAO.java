@@ -147,11 +147,12 @@ public class ProductDAO {
 			// 출고가 기준으로 입고가 계산
 			int inputPrice = dto.getOutput_price() / 2;
 			int rentalUnitPrice = (int) (dto.getOutput_price() * 0.1);
+			
 
 			sql = "INSERT INTO cam_product "
 					+ "(product_no, category_no, product_name, input_price, output_price, stock_qty, "
-					+ "sold_qty, is_sold_out, is_rental_available, rental_unit_price, product_image, detail_image1, detail_image2, detail_image3, detail_image4) "
-					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+					+ "sold_qty, is_sold_out, is_rent_available, rental_unit_price, product_image, detail_image1, detail_image2, detail_image3, detail_image4) "
+					+ "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
 			pstmt = con.prepareStatement(sql);
 			pstmt.setInt(1, count);
@@ -162,13 +163,13 @@ public class ProductDAO {
 			pstmt.setInt(6, dto.getStock_qty());
 			pstmt.setInt(7, 0); // sold_qty = 0
 			pstmt.setString(8, "N"); // is_sold_out = 'N'
-			pstmt.setString(9, "Y"); // is_rental_available = 'N'
-			pstmt.setInt(9, rentalUnitPrice); // 대여금액
-			pstmt.setString(9, dto.getProduct_image());
-			pstmt.setString(10, dto.getDetail_image1());
-			pstmt.setString(11, dto.getDetail_image2());
-			pstmt.setString(12, dto.getDetail_image3());
-			pstmt.setString(13, dto.getDetail_image4());
+			pstmt.setString(9, "Y"); // is_rent_available = 'N'
+			pstmt.setInt(10, rentalUnitPrice); // 대여금액
+			pstmt.setString(11, dto.getProduct_image());
+			pstmt.setString(12, dto.getDetail_image1());
+			pstmt.setString(13, dto.getDetail_image2());
+			pstmt.setString(14, dto.getDetail_image3());
+			pstmt.setString(15, dto.getDetail_image4());
 
 			result = pstmt.executeUpdate();
 
@@ -270,16 +271,18 @@ public class ProductDAO {
 	{
 		openConn();
 
-		sql = "update cam_product set " + " product_image = ?, stock_qty = ?, " + " output_price = ?, rental_unit_price = ?, getIs_sold_out = ?, getIs_rent_available = ?  where pnum = ?";
+		sql = "update cam_product set product_image = ?, product_name = ?, stock_qty = ?, output_price = ?, rental_unit_price = ?, is_sold_out = ?, is_rent_available = ?  where product_no = ?";
 
 		pstmt = con.prepareStatement(sql);
 
 		pstmt.setString(1, dto.getProduct_image());
-		pstmt.setInt(2, dto.getStock_qty());
-		pstmt.setInt(3, dto.getOutput_price());
-		pstmt.setInt(4, dto.getRental_unit_price());
-		pstmt.setString(5, dto.getIs_sold_out());
-		pstmt.setString(6, dto.getIs_rent_available());
+		pstmt.setString(2, dto.getProduct_name());
+		pstmt.setInt(3, dto.getStock_qty());
+		pstmt.setInt(4, dto.getOutput_price());
+		pstmt.setInt(5, dto.getRental_unit_price());
+		pstmt.setString(6, dto.getIs_sold_out());
+		pstmt.setString(7, dto.getIs_rent_available());
+		pstmt.setInt(8, dto.getProduct_no());
 		
 
 		result = pstmt.executeUpdate();

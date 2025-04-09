@@ -17,7 +17,7 @@ public class AdminProductDeleteAction implements Action {
 		// get 방식으로 넘어온 상품번호에 해당하는 상품을
 		// DB에서 삭제하는 비지니스 로직.
 		int product_no = 
-				Integer.parseInt(request.getParameter("pnum").trim());
+				Integer.parseInt(request.getParameter("no").trim());
 		
 		ProductDAO dao = ProductDAO.getInstance();
 		
@@ -30,12 +30,12 @@ public class AdminProductDeleteAction implements Action {
 			dao.updateSequence(product_no);
 			
 			out.println("<script>");
-			out.println("alert('상품 삭제 성공!!!')");
-			out.println("location.href='admin_product_list.do'");
+			out.println("alert('상품이 삭제되었습니다.')");
+			out.println("location.href='admin_product_list.go'");
 			out.println("</script>");
 		}else {
 			out.println("<script>");
-			out.println("alert('상품 삭제 실패~~~')");
+			out.println("alert('※ 상품이 삭제되지 않았습니다. ※')");
 			out.println("history.back()");
 			out.println("</script>");
 		}
