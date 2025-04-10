@@ -274,4 +274,15 @@ INSERT INTO rental (
   TO_DATE('2025-03-02', 'YYYY-MM-DD'),
   '반납완료'
 );
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date,
+  rental_status
+) VALUES (
+ 6,17,5,1,4,30000,
+  TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-11', 'YYYY-MM-DD'),
+  '대여중'
+);
+
 commit;

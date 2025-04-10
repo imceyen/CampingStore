@@ -149,7 +149,7 @@ public class AdminDAO {
 			
 			if(rs.next()) {
 				
-				if(pwd.equals(rs.getString("admin_pwd"))) {
+				if(pwd.equals(rs.getString("password"))) {
 					// 관리자인 경우(아이디와 비밀번호가 일치하는 관리자)
 					result = 1;
 				}else {
@@ -192,7 +192,7 @@ public class AdminDAO {
 				dto = new AdminDTO();
 				
 				dto.setAdmin_id(rs.getString(1));
-				dto.setAdmin_pwd(rs.getString(2));
+				dto.setPassword(rs.getString(2));
 			
 			}
 			

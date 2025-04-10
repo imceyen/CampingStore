@@ -22,7 +22,7 @@
 
 		<!-- 메뉴: 오른쪽 정렬 -->
 		<nav class="ml-auto space-x-6">
-			<a href="#" class="text-sm hover:underline">로그인</a>
+			<a href="admin_login.go" class="text-sm hover:underline">로그인</a>
 			<a href="#" class="text-sm hover:underline">회원가입</a> <a href="#"
 				class="text-sm hover:underline">마이페이지</a> <a href="#"
 				class="text-sm hover:underline">장바구니</a>

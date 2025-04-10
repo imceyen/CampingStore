@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 
 <!DOCTYPE html>
@@ -31,25 +30,25 @@
 		<br>
 
 		<!-- 로그인 폼 -->
-		<form action="login.go" method="post" class="w-96 space-y-6">
-			
+		<form action="customer_login_ok.go" method="post" class="w-96 space-y-6">
+
 			<!-- 아이디 -->
-			<input type="text" name="id" id="id" required
+			<input type="text" name="user_id" id="user_id" required
 				placeholder="아이디"
 				class="w-full border-0 border-b border-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black" />
-			<br><br>
-			
+			<br>
+			<br>
+
 			<!-- 비밀번호 -->
-			<input type="password" name="pwd" id="pwd" required
+			<input type="password" name="user_pwd" id="user_pwd" required
 				placeholder="비밀번호"
 				class="w-full border-0 border-b border-black placeholder-gray-400 focus:outline-none focus:ring-0 focus:border-black" />
-			<br><br>
-			
-			<input type="submit" value="로그인"
+			<br>
+			<br> <input type="submit" value="로그인"
 				class="w-full bg-black text-white py-3 text-base font-semibold hover:bg-gray-800 transition" />
-			
+
 		</form>
-		
+
 		<br>
 		<!-- 회원가입 버튼 -->
 		<form action="register.jsp" method="get" class="w-96 mt-4">

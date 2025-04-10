@@ -28,7 +28,7 @@
             <a href="<%=request.getContextPath() %>/admin_product_list.go" class="block w-full text-center border border-black px-4 py-2 rounded hover:bg-black hover:text-white transition">
                 상품 관리
             </a>
-            <a href="<%=request.getContextPath() %>/admin_product_input.do" class="block w-full text-center border border-black px-4 py-2 rounded hover:bg-black hover:text-white transition">
+            <a href="<%=request.getContextPath() %>/admin_rental_list.go" class="block w-full text-center border border-black px-4 py-2 rounded hover:bg-black hover:text-white transition">
                 대여 반납 관리
             </a>
             <a href="<%=request.getContextPath() %>/admin_sales_report.go" class="block w-full text-center border border-black px-4 py-2 rounded hover:bg-black hover:text-white transition">

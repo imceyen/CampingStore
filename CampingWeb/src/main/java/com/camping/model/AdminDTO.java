@@ -3,7 +3,7 @@ package com.camping.model;
 public class AdminDTO {
 
 	private String admin_id;
-	private String admin_pwd;
+	private String password;
 	
 	
 	public String getAdmin_id() {
@@ -13,14 +13,16 @@ public class AdminDTO {
 	public void setAdmin_id(String admin_id) {
 		this.admin_id = admin_id;
 	}
-	
-	public String getAdmin_pwd() {
-		return admin_pwd;
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 	
-	public void setAdmin_pwd(String admin_pwd) {
-		this.admin_pwd = admin_pwd;
-	}
+
 	
 	
 	

@@ -11,6 +11,14 @@ public class RentalDTO {
     private String return_date;
     private String actual_return_date;
     private String rental_status;
+    private int remaining_days;  // 남은 일수
+
+    public int getRemaining_days() {
+        return remaining_days;
+    }
+    public void setRemaining_days(int remaining_days) {
+        this.remaining_days = remaining_days;
+    }
     
     
 	public int getRental_no() {
