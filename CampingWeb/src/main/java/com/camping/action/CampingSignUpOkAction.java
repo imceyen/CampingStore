@@ -14,7 +14,7 @@ public class CampingSignUpOkAction implements Action {
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		
-		
+		// 회원가입 폼 페이지에서 넘어온 데이터를 테이블에 저장
 		String customer_id = request.getParameter("cus_id").trim();
 		String password = request.getParameter("cus_pwd").trim();
 		String name = request.getParameter("cus_name").trim();
@@ -40,7 +40,7 @@ public class CampingSignUpOkAction implements Action {
 		PrintWriter out = response.getWriter();
 		
 		if(check > 0) {
-			// 게시글 추가 성공한 경우
+			// 회원가입 성공
 			out.println("<script>");
 			out.println("alert('회원가입 완료')");
 			out.println("location.href='main.jsp'");			
@@ -49,7 +49,7 @@ public class CampingSignUpOkAction implements Action {
 			// forward.setRedirect(true);
 			// forward.setPath("bbs_list.go");
 		}else {
-			// 게시글 추가 실패한 경우
+			// 회원가입 실패
 			out.println("<script>");
 			out.println("alert('회원가입 실패')");
 			out.println("history.back()");			

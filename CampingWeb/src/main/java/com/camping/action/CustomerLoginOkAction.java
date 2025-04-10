@@ -25,8 +25,11 @@ public class CustomerLoginOkAction implements Action {
 	            HttpSession session = request.getSession();
 	            session.setAttribute("cus_id", id);
 	            
-	            String name = dao.getCustomerName(id);  
+	            String name = dao.getCustomerName(id);  // DAO에서 이름 가져오는 메서드를 만들어야 해
 	            session.setAttribute("cus_name", name);
+	            
+	            int no = dao.getCustomerNo(id);
+	            session.setAttribute("cus_no", no); 
 	            
 	            ActionForward forward = new ActionForward();
 	            

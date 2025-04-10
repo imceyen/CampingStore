@@ -19,7 +19,7 @@
   <header class="w-full border-b py-4 px-6 relative flex items-center">
   <!-- 로고: 중앙에 위치 -->
   <h1 class="absolute left-1/2 transform -translate-x-1/2 text-2xl font-bold">
-    캠핑스토어
+    PanknGO
   </h1>
 
   <!-- 메뉴: 오른쪽 정렬 -->

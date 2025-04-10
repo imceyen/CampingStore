@@ -12,7 +12,7 @@ import javax.sql.DataSource;
 
 public class CustomerDAO {
 
-	// DB와 연결하는 객체
+		// DB와 연결하는 객체
 		Connection con = null;
 			
 		// DB에 SQL문을 전송하는 객체.
@@ -313,6 +313,7 @@ public class CustomerDAO {
 			
 			if (rs.next()) {
 	            dto = new CustomerDTO();
+	            
 	            dto.setCustomer_no(rs.getInt("customer_no"));
 	            dto.setCustomer_id(rs.getString("customer_id"));
 	            dto.setPassword(rs.getString("password"));
@@ -372,7 +373,7 @@ public class CustomerDAO {
 
 	
 	// 탈퇴할 회원의 회원 번호 조회
-	public int getCustomerNo(String id) {
+	public int getDeleteCustomerNo(String id) {
 		
 		int no = -1;
 
@@ -464,7 +465,36 @@ public class CustomerDAO {
 	
 	
 //-------------------------------------------------------------------------------------------------------------------------
-
+	
+	
+	// 고객 번호 가져오는 메서드
+	public int getCustomerNo(String id) {
+	    int no = 0;
+	    try {
+	        openConn();
+	        
+	        sql = "select customer_no from customer where customer_id = ?";
+	        
+	        pstmt = con.prepareStatement(sql);
+	        
+	        pstmt.setString(1, id);
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        
+	        if (rs.next()) {
+	            no = rs.getInt("customer_no");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	   
+	    } finally {
+	        closeConn(rs, pstmt, con);
+	    }
+	    
+	    return no;
+	} // getCustomerNo() end
 	
 
 }

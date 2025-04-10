@@ -23,7 +23,7 @@ public class CustomerDeleteOkAction implements Action {
 		
 		
 		// 탈퇴할 회원의 번호를 id로 조회
-		int cusNo = dao.getCustomerNo(id);
+		int cusNo = dao.getDeleteCustomerNo(id);
 		
 		// 회원 탈퇴(삭제)
 		int result = dao.deleteCustomer(id);

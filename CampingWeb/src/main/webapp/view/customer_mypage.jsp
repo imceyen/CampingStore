@@ -1,3 +1,4 @@
+<%@page import="com.camping.model.InquiryDAO"%>
 <%@page import="com.camping.model.CustomerDAO"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%><%@ page import="javax.servlet.http.*, javax.servlet.*" %>
@@ -5,21 +6,21 @@
     // 로그인 여부 확인 후 진행
     String name = (String) session.getAttribute("cus_name");
     String id = (String) session.getAttribute("cus_id");
+    int no = (Integer) session.getAttribute("cus_no");
+    
     if (name == null) {
         response.sendRedirect("customer_login.go");
         return;
     }
 
-    // DAO로 문의 수 가져오기
-    /*
+    // 작성한 문의 수 가져오기
     int inquiryCount = 0;
     try {
-        com.camping.model.CustomerDAO dao = new CustomerDAO();
-        inquiryCount = dao.getInquiryCount(id); 
+        InquiryDAO dao = InquiryDAO.getInstance();
+        inquiryCount = dao.getInquiryCount(no);  
     } catch (Exception e) {
         e.printStackTrace();
     }
-    */
 %>
 
 <!DOCTYPE html>
@@ -40,23 +41,22 @@
 
         <h2 class="text-2xl font-bold text-center mb-10">마이페이지</h2>
 
-        <!-- 이름 + 1:1문의 수 한 줄로 정렬 -->
+		<!-- 이름 + 1:1문의 수 한 줄로 정렬 -->
 		<div class="bg-gray-100 text-center py-10 rounded-lg mb-12">
-  		<div class="flex justify-center items-center gap-12 text-sm">
-    
-    		<!-- 이름 -->
-    		<div class="text-xl font-semibold"><%= name %> 님</div>
-    
-    		<!-- 
-    		1:1 문의 
-    		<div class="text-center">
-      			<p class="font-semibold text-lg"></p>
-      			<p>1:1문의</p>
-    		</div>
-    		-->
+		  <div class="flex justify-center items-start gap-32 text-sm">  <%-- 간격 넓게 --%>
 
-  		</div>
+		    <!-- 이름 -->
+		    <div class="text-xl font-semibold mt-2"><%= name %> 님</div>
+
+		    <!-- 1:1 문의 수 -->
+		    <div class="text-center">
+		      <p class="text-sm text-black-500 mb-2">1:1문의</p>
+		      <p class="font-semibold text-xl"><%= inquiryCount %></p>
+		    </div>
+
+		  </div>
 		</div>
+
 
         <!-- 정보 섹션 -->
         <div class="grid grid-cols-3 gap-10 text-center text-sm border-t border-gray-300 pt-6">
@@ -64,7 +64,11 @@
             <div>
                 <p class="font-bold mb-3">나의 쇼핑 정보</p>
  				<p class="mb-1"><a href="#">구매 내역 조회</a></p>
-    			<p><a href="#">구매 후기</a></p>
+    			<p><a href="review_write.go?product_no=999">구매 후기</a></p>
+    			<%-- 
+    				※ 실제 구현 시에는 구매한 상품 목록에서 아래와 같이 넘겨줄 예정:
+    				<a href="review_write.go?product_no=${product.product_no}">후기 작성</a>
+				--%>
             </div>
 
             <!-- 고객센터 -->

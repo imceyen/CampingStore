@@ -203,7 +203,12 @@ public class InquiryDAO {
 				dto.setInquiry_no(rs.getInt("inquiry_no"));
 				dto.setCustomer_no(rs.getInt("customer_no"));
 				dto.setProduct_no(rs.getInt("product_no"));
-				dto.setContent(rs.getString("content"));
+				
+	            // content 값을 DB에서 가져온 후 첫 번째 줄만 추출
+	            String content = rs.getString("content");
+	            content = getFirstLine(content);  // 첫 줄만 추출
+	            dto.setContent(content);
+				
 				dto.setInquiry_date(rs.getDate("inquiry_date"));
 				
 				list.add(dto);
@@ -263,12 +268,141 @@ public class InquiryDAO {
 //-------------------------------------------------------------------------------------------------------------------------
 
 	
+	// 1:1 문의 수정 메서드
+	public int updateInquiryContent(int inquiryNo, String content) {
+		
+		int result = 0;
+		
+		try {
+			openConn();
+			
+			sql = "update product_inquiry set content = ? where inquiry_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, content);
+			pstmt.setInt(2, inquiryNo);
+			
+			result = pstmt.executeUpdate();
+			
+			
+		
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+		
+		
+	} // updateInquiryContent() end
+
+
+//-------------------------------------------------------------------------------------------------------------------------
 	
 	
+	// 문의 삭제 메서드
+	public int deleteInquiry(int inquiryNo) {
+		
+		int result = 0;
+
+		try {		
+			openConn();
+			
+			sql = "delete from product_inquiry where inquiry_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, inquiryNo);
+			
+			result = pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+		
+	} // deleteInquiry() end
 	
 	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
+	// 문의 삭제 후 문의 번호 정렬 메서드
+	public void updateInquiryNoAfterDelete(int deleteNo) {
+		
+		try {
+			openConn();
+			
+			sql = "update product_inquiry set inquiry_no = inquiry_no - 1 where inquiry_no > ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, deleteNo);
+			
+			pstmt.executeUpdate();
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+	} // updateInquiryNoAfterDelete() end
 	
 	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	// 문의 수 반환하는 메서드
+	public int getInquiryCount(int customerNo) {
+	    int count = 0;
+
+	    try {
+	        openConn();
+	        
+	        sql = "select count(*) from product_inquiry where customer_no = ?";
+
+	        pstmt = con.prepareStatement(sql);
+	        
+	        pstmt.setInt(1, customerNo);
+
+	        rs = pstmt.executeQuery();
+
+	        if (rs.next()) {
+	            count = rs.getInt(1);
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+
+	    } finally {
+	        closeConn(rs, pstmt, con);
+	    }
+
+	    return count;
+	}
+
 	
+//-------------------------------------------------------------------------------------------------------------------------
+
 	
+	// 첫 번째 줄만 추출하는 메서드
+	private String getFirstLine(String content) {
+	    if (content != null) {
+	        // 줄바꿈을 기준으로 첫 번째 줄만 잘라냄
+	        String[] lines = content.split("(\r\n|\n)", 2);  // 첫 번째 줄만 잘라내기
+	        return lines[0];
+	    }
+	    return content;
+	}
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
 }
