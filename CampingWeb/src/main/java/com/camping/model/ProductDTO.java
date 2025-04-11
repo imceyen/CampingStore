@@ -8,6 +8,7 @@ public class ProductDTO {
 	private int output_price;
 	private int stock_qty;
 	private int sold_qty;
+	private int rental_stock;
 	private String is_sold_out;
 	private String is_rent_available;
 	private int rental_unit_price;
@@ -18,6 +19,13 @@ public class ProductDTO {
 	private String detail_image4;
 	
 	
+	
+	public int getRental_stock() {
+		return rental_stock;
+	}
+	public void setRental_stock(int rental_stock) {
+		this.rental_stock = rental_stock;
+	}
 	public int getProduct_no() {
 		return product_no;
 	}

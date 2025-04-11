@@ -15,22 +15,21 @@ public class AdminRentalProductAction implements Action {
 	@Override
 	public ActionForward execute(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// DAO 객체 생성
+		
+        // DAO 생성
         RentalDAO dao = RentalDAO.getInstance();
         
-        // 대여 재고 상태 목록 가져오기
+        // 대여 상품 재고 현황 조회
         List<RentalStockDTO> rentalStockList = dao.getRentalStockStatus();
 
-        // request에 데이터 담기
+        // 조회 결과 request에 저장
         request.setAttribute("rentalStockList", rentalStockList);
 
-        // 포워딩 경로 설정
+        // 포워딩
         ActionForward forward = new ActionForward();
         forward.setRedirect(false);
-        forward.setPath("view/admin_rental_product.jsp");  // 여기에 JSP 만들 예정
+        forward.setPath("view/admin_rental_product.jsp");
 
         return forward;
     }
-	
-
 }

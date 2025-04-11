@@ -347,8 +347,26 @@ public int deleteProduct(int no) {
 	{
 		closeConn(pstmt, con);
 	}
+	}
+	
+	// 재고 수량 증가
+	public void increaseRentalStock(String productNo, int qty) throws SQLException {
+		openConn();
+	    try {
 
-	} // updateSequence() 메서드 end
+	        String sql = "UPDATE cam_product SET rental_stock = rental_stock + ? WHERE product_no = ?";
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, qty);
+	        pstmt.setString(2, productNo);
+	        pstmt.executeUpdate();
+
+	    } finally {
+	        closeConn(pstmt, con);
+	    }
+	}
+
+
+	 // updateSequence() 메서드 end
 
 	/*
 	 * // 카테고리 코드에 해당하는 제품의 전체 리스트를 // 조회하는 메서드. public List<ProductDTO>

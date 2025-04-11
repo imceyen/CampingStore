@@ -1,13 +1,19 @@
 package com.camping.model;
 
 public class RentalStockDTO {
+	private int rental_no;
     private int product_no;
     private String product_name;
-    private int total_qty;
-    private int rented_qty;
-    private int available_qty;
+    private int rental_stock;   // 대여 가능한 총 재고
+    private int rented_qty;     // 현재 대여 중 수량
+    private int available_qty;  // 남은 수량
 
-    // Getter/Setter
+    public int getRental_no() {
+        return rental_no;
+    }
+    public void setRental_no(int rental_no) {
+        this.rental_no = rental_no;
+    }
     public int getProduct_no() {
         return product_no;
     }
@@ -24,12 +30,12 @@ public class RentalStockDTO {
         this.product_name = product_name;
     }
 
-    public int getTotal_qty() {
-        return total_qty;
+    public int getRental_stock() {
+        return rental_stock;
     }
 
-    public void setTotal_qty(int total_qty) {
-        this.total_qty = total_qty;
+    public void setRental_stock(int rental_stock) {
+        this.rental_stock = rental_stock;
     }
 
     public int getRented_qty() {

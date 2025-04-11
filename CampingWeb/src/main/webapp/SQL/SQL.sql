@@ -285,4 +285,195 @@ INSERT INTO rental (
   '대여중'
 );
 
-commit;
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  7, 9, 2, 1, 4,
+  140000, TO_DATE('2025-04-01', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-03', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  8, 3, 4, 2, 3,
+  64000, TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-10', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  9, 12, 1, 2, 3,
+  60000, TO_DATE('2025-04-08', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-10', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  10, 3, 2, 1, 3,
+  14000, TO_DATE('2025-04-03', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-04', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  11, 14, 1, 2, 1,
+  40000, TO_DATE('2025-04-03', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-05', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  12, 10, 6, 4, 1,
+  600000, TO_DATE('2025-04-06', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  13, 18, 4, 3, 0,
+  144000, TO_DATE('2025-04-05', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-08', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  14, 9, 1, 1, 0,
+  60000, TO_DATE('2025-04-05', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-08', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  15, 6, 7, 2, 3,
+  60000, TO_DATE('2025-04-03', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-04', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  16, 13, 12, 3, 2,
+  1380000, TO_DATE('2025-04-01', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-05', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  17, 23, 2, 1, 2,
+  70000, TO_DATE('2025-04-04', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  18, 4, 3, 1, 4,
+  45000, TO_DATE('2025-04-06', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  19, 8, 5, 2, 2,
+  84000, TO_DATE('2025-04-04', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-06', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  20, 17, 10, 1, 4,
+  750000, TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-11', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  21, 22, 9, 2, 3,
+  175000, TO_DATE('2025-04-07', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-10', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  22, 29, 8, 2, 3,
+  20000, TO_DATE('2025-04-10', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-11', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  23, 25, 11, 2, 3,
+  320000, TO_DATE('2025-04-01', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-03', 'YYYY-MM-DD'),
+  '연체'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  24, 30, 6, 1, 0,
+  120000, TO_DATE('2025-04-09', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-11', 'YYYY-MM-DD'),
+  '대여중'
+);
+
+INSERT INTO rental (
+  rental_no, customer_no, product_no, rental_qty, remain_qty,
+  rental_price, rental_date, return_date, rental_status
+) VALUES (
+  25, 11, 12, 2, 0,
+  1150000, TO_DATE('2025-04-01', 'YYYY-MM-DD'),
+  TO_DATE('2025-04-06', 'YYYY-MM-DD'),
+  '연체'
+);
+
+DELETE FROM rental
+WHERE rental_no = 6;
