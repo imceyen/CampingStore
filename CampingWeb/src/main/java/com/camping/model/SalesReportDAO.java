@@ -55,54 +55,87 @@ public class SalesReportDAO {
 	}
 
 	// sales_statistics 테이블에 매출 데이터 계산 후 저장
+	// 대여 매출도 계산하여 sales_statistics에 반영
 	public int calculateAndInsertSalesStatistics() {
-		int result = 0;
-		try {
-			openConn();
+	    int result = 0;
+	    try {
+	        openConn();
 
-			// 상품별 총매출, 총원가, 순이익 계산
-			sql = "SELECT od.product_no, " +
-					"SUM(od.quantity * cp.output_price) AS total_sales, " +
-					"SUM(od.quantity * cp.input_price) AS total_cost, " +
-					"SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
-				"FROM order_detail od " +
-				"JOIN cam_product cp ON od.product_no = cp.product_no " +
-				"GROUP BY od.product_no";
+	        // 모든 상품 기준으로 시작
+	        sql = "SELECT product_no, input_price, output_price FROM cam_product";
+	        pstmt = con.prepareStatement(sql);
+	        rs = pstmt.executeQuery();
 
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            int product_no = rs.getInt("product_no");
+	            int input_price = rs.getInt("input_price");
+	            int output_price = rs.getInt("output_price");
 
-			while(rs.next()) {
-				int product_no = rs.getInt("product_no");
-				int total_sales = rs.getInt("total_sales");
-				int total_cost = rs.getInt("total_cost");
-				int total_profit = rs.getInt("total_profit");
+	            int order_qty = 0;
+	            int total_sales = 0;
+	            int total_cost = 0;
+	            int total_profit = 0;
 
-				// 먼저 기존 값이 있으면 삭제 후 새로 삽입
-				String deleteSql = "DELETE FROM sales_statistics WHERE product_no = ?";
-				PreparedStatement deletePstmt = con.prepareStatement(deleteSql);
-				deletePstmt.setInt(1, product_no);
-				deletePstmt.executeUpdate();
-				deletePstmt.close();
+	            // 주문 수량 조회
+	            String orderSql = "SELECT SUM(quantity) AS total_qty FROM order_detail WHERE product_no = ?";
+	            PreparedStatement orderPstmt = con.prepareStatement(orderSql);
+	            orderPstmt.setInt(1, product_no);
+	            ResultSet orderRs = orderPstmt.executeQuery();
+	            if (orderRs.next()) {
+	                order_qty = orderRs.getInt("total_qty");
+	            }
+	            orderRs.close();
+	            orderPstmt.close();
 
-				// 새 데이터 삽입
-				String insertSql = "INSERT INTO sales_statistics (product_no, total_sales, total_cost, total_profit) VALUES (?, ?, ?, ?)";
-				PreparedStatement insertPstmt = con.prepareStatement(insertSql);
-				insertPstmt.setInt(1, product_no);
-				insertPstmt.setInt(2, total_sales);
-				insertPstmt.setInt(3, total_cost);
-				insertPstmt.setInt(4, total_profit);
-				result += insertPstmt.executeUpdate();
-				insertPstmt.close();
-			}
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			closeConn(rs, pstmt, con);
-		}
-		return result;
+	            // 기본 매출 계산
+	            total_sales = order_qty * output_price;
+	            total_cost = order_qty * input_price;
+	            total_profit = (output_price - input_price) * order_qty;
+
+	            // 대여 매출 조회
+	            String rentalSql = "SELECT SUM(rental_price) AS rental_sales FROM rental WHERE product_no = ?";
+	            PreparedStatement rentalPstmt = con.prepareStatement(rentalSql);
+	            rentalPstmt.setInt(1, product_no);
+	            ResultSet rentalRs = rentalPstmt.executeQuery();
+
+	            int rental_sales = 0;
+	            if (rentalRs.next()) {
+	                rental_sales = rentalRs.getInt("rental_sales");
+	            }
+	            rentalRs.close();
+	            rentalPstmt.close();
+
+	            total_sales += rental_sales;
+	            total_profit += rental_sales; // 대여 수익은 순이익으로 계산
+
+	            // 기존 데이터 삭제
+	            String deleteSql = "DELETE FROM sales_statistics WHERE product_no = ?";
+	            PreparedStatement deletePstmt = con.prepareStatement(deleteSql);
+	            deletePstmt.setInt(1, product_no);
+	            deletePstmt.executeUpdate();
+	            deletePstmt.close();
+
+	            // 새 데이터 삽입
+	            String insertSql = "INSERT INTO sales_statistics (product_no, total_sales, total_cost, total_profit) VALUES (?, ?, ?, ?)";
+	            PreparedStatement insertPstmt = con.prepareStatement(insertSql);
+	            insertPstmt.setInt(1, product_no);
+	            insertPstmt.setInt(2, total_sales);
+	            insertPstmt.setInt(3, total_cost);
+	            insertPstmt.setInt(4, total_profit);
+	            result += insertPstmt.executeUpdate();
+	            insertPstmt.close();
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    } finally {
+	        closeConn(rs, pstmt, con);
+	    }
+	    return result;
 	}
+
+
+
 	
 	public List<SalesReportDTO> getTotalSalesForChart() {
 	    List<SalesReportDTO> list = new ArrayList<>();

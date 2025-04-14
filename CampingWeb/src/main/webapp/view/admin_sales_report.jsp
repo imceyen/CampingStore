@@ -186,6 +186,7 @@
     }
   </script>
 	<script>
+	
   const barCanvas = document.getElementById('productBarChart');
   const rawData = barCanvas.dataset.products;
   const productData = JSON.parse(rawData);
