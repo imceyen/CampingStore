@@ -26,11 +26,13 @@ public class CustomerEditOkAction implements Action {
         PrintWriter out = response.getWriter();
 
         if (result > 0) {
+            // 회원 정보 수정 성공 시
             out.println("<script>");
             out.println("alert('회원 정보가 성공적으로 수정되었습니다.');");
             out.println("location.href='customer_mypage.go';");
             out.println("</script>");
         } else {
+            // 회원 정보 수정 실패 시
             out.println("<script>");
             out.println("alert('회원 정보 수정에 실패했습니다. 다시 시도해주세요.');");
             out.println("history.back();");

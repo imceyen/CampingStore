@@ -6,7 +6,6 @@
     // 로그인 여부 확인 후 진행
     String name = (String) session.getAttribute("cus_name");
     String id = (String) session.getAttribute("cus_id");
-    int no = (Integer) session.getAttribute("cus_no");
     
     if (name == null) {
         response.sendRedirect("customer_login.go");
@@ -14,7 +13,10 @@
     }
 
     // 작성한 문의 수 가져오기
+    int no = (Integer) session.getAttribute("cus_no");
+    
     int inquiryCount = 0;
+    
     try {
         InquiryDAO dao = InquiryDAO.getInstance();
         inquiryCount = dao.getInquiryCount(no);  

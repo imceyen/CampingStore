@@ -18,6 +18,7 @@ public class InquiryWriteOkAction implements Action {
         String content = request.getParameter("content");
 
         InquiryDTO dto = new InquiryDTO();
+        
         dto.setCustomer_no(customer_no);
         dto.setProduct_no(product_no);
         dto.setContent(content);
@@ -26,6 +27,7 @@ public class InquiryWriteOkAction implements Action {
         int result = dao.insertInquiry(dto);
 
         ActionForward forward = new ActionForward();
+        
         if (result > 0) {
             forward.setRedirect(true);
             forward.setPath("inquiry_list.go");

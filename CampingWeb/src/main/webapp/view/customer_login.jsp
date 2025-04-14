@@ -32,11 +32,12 @@
     <form action="customer_login_ok.go" method="post" class="w-full max-w-sm mt-10 px-6">
     	<h2 class="text-2xl font-bold text-center mb-10">로그인</h2>
 
-    	<input type="text" name="id" placeholder="아이디"
-        	class="w-full border-b border-black py-3 mb-6 focus:outline-none" required>
+    	<input type="text" name="user_id" placeholder="아이디"
+    		class="w-full border-b border-black py-3 mb-6 focus:outline-none" required>
 
-    	<input type="password" name="pwd" placeholder="비밀번호"
-        	class="w-full border-b border-black py-3 mb-6 focus:outline-none" required>
+		<input type="password" name="user_pwd" placeholder="비밀번호"
+    		class="w-full border-b border-black py-3 mb-6 focus:outline-none" required>
+
 
     <button type="submit" class="w-full bg-black text-white py-3 rounded hover:bg-gray-900 mb-4">
         로그인

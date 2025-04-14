@@ -86,7 +86,6 @@ public class InquiryDAO {
 			con = ds.getConnection();
 				
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 				
@@ -104,7 +103,6 @@ public class InquiryDAO {
 				if(con != null) con.close();
 					
 			} catch (SQLException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 				
@@ -121,7 +119,6 @@ public class InquiryDAO {
 			if(con != null) con.close();
 				
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
 				e.printStackTrace();
 		}
 			
@@ -229,7 +226,7 @@ public class InquiryDAO {
 //-------------------------------------------------------------------------------------------------------------------------
 	
 	
-	// 문의 내역 상세보기 메서드
+	// 고객 문의 내역 상세보기 메서드
 	public InquiryDTO getInquiryDetail(int inquiryNo) {
 		InquiryDTO dto = null;
 		
@@ -251,6 +248,10 @@ public class InquiryDAO {
 	            dto.setProduct_no(rs.getInt("product_no"));
 	            dto.setContent(rs.getString("content"));
 	            dto.setInquiry_date(rs.getDate("inquiry_date"));
+	            
+	            // 답변 내용과 답변 일자 추가
+	            dto.setAnswer_content(rs.getString("answer_content"));
+	            dto.setAnswer_date(rs.getDate("answer_date"));
 	        }
 			
 		} catch (SQLException e) {
@@ -394,7 +395,7 @@ public class InquiryDAO {
 
 	
 	// 첫 번째 줄만 추출하는 메서드
-	private String getFirstLine(String content) {
+	public String getFirstLine(String content) {
 	    if (content != null) {
 	        // 줄바꿈을 기준으로 첫 번째 줄만 잘라냄
 	        String[] lines = content.split("(\r\n|\n)", 2);  // 첫 번째 줄만 잘라내기
@@ -405,4 +406,242 @@ public class InquiryDAO {
 	
 //-------------------------------------------------------------------------------------------------------------------------
 
+	
+	// 관리자 - 전체 문의내역 목록 조회 메서드
+	public List<InquiryDTO> getAllInquiriesForAdmin() {
+		List<InquiryDTO> list = new ArrayList<>();
+
+	    try {
+	        openConn();
+	        
+	        // 관리자용으로 모든 문의 조회 (답변 여부, 작성자 정보 포함)
+	        sql = "select inquiry_no, customer_no, product_no, content, inquiry_date, answer_content from product_inquiry order by inquiry_date desc";
+
+	        pstmt = con.prepareStatement(sql);
+	        
+	        rs = pstmt.executeQuery();
+
+	        while (rs.next()) {
+	            InquiryDTO dto = new InquiryDTO();
+	            
+	            dto.setInquiry_no(rs.getInt("inquiry_no"));
+	            dto.setCustomer_no(rs.getInt("customer_no"));
+	            dto.setProduct_no(rs.getInt("product_no"));
+	            dto.setContent(rs.getString("content"));
+	            dto.setInquiry_date(rs.getDate("inquiry_date"));
+	            
+	            // 답변 여부를 판단하여 '답변완료' 또는 '미답변'으로 설정하기 위해서 사용
+	            dto.setAnswer_content(rs.getString("answer_content"));
+
+	            list.add(dto);
+	        }
+	        
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        
+	    } finally {
+	    	closeConn(rs, pstmt, con);
+	    }
+
+	    return list;
+	}
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
+	// 관리자) 전체 문의내역 상세보기
+	public InquiryDTO getInquiryByNo(int inquiryNo) {
+		
+		InquiryDTO dto = null;
+
+		
+		try {
+			openConn();
+			
+			sql = "select * from product_inquiry where inquiry_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setInt(1, inquiryNo);
+			
+			rs = pstmt.executeQuery();
+			
+			
+			if (rs.next()) {
+				dto = new InquiryDTO();
+		        dto.setInquiry_no(rs.getInt("inquiry_no"));
+		        dto.setCustomer_no(rs.getInt("customer_no"));
+		        dto.setProduct_no(rs.getInt("product_no"));
+		        dto.setContent(rs.getString("content"));
+		        dto.setInquiry_date(rs.getDate("inquiry_date"));
+		        dto.setAnswer_content(rs.getString("answer_content"));
+		        dto.setAnswer_date(rs.getDate("answer_date"));
+		    }
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(rs, pstmt, con);
+		}
+		
+		return dto;
+		
+	}
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
+	// 관리자) 1:1 문의 답변 메서드
+	public boolean addAnswerToInquiry(int inquiryNo, String answerContent) {
+		boolean result = false;
+
+		try {
+			openConn();
+			
+			sql = "update product_inquiry set answer_content = ?, answer_date = sysdate where inquiry_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+			pstmt.setString(1, answerContent);
+			pstmt.setInt(2, inquiryNo);
+			
+			int updateCount = pstmt.executeUpdate();
+			
+			if (updateCount > 0) {
+				result = true;
+	        }
+			
+			
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+	}
+
+	
+//-------------------------------------------------------------------------------------------------------------------------
+
+	
+	// 관리자) 1:1 문의 답변 수정 메서드
+	public int updateInquiryAnswerContent(InquiryDTO dto) {
+		int result = 0;
+		
+		try {
+			openConn();
+			
+			sql = "update product_inquiry set answer_content = ?, answer_date = ? where inquiry_no = ?";
+			
+			pstmt = con.prepareStatement(sql);
+			
+	        pstmt.setString(1, dto.getAnswer_content());
+	        
+	        // 답변일자가 null일 경우, 현재 날짜를 설정
+	        if (dto.getAnswer_date() == null) {
+	            pstmt.setDate(2, new java.sql.Date(System.currentTimeMillis())); // 현재 날짜
+	        } else {
+	            pstmt.setDate(2, dto.getAnswer_date());
+	        }
+	        
+	        pstmt.setInt(3, dto.getInquiry_no());
+            
+            result = pstmt.executeUpdate();
+            
+            
+		} catch (SQLException e) {
+			e.printStackTrace();
+		
+		} finally {
+			closeConn(pstmt, con);
+		}
+		
+		return result;
+		
+	}
+	
+	
+	// 관리자) 1:1문의 답변 포함 상세보기
+	public InquiryDTO getInquiryDetailWithAnswer(int inquiryNo) {
+	    InquiryDTO dto = null;
+	    
+	    try {
+	        openConn();
+	        
+	        // 답변까지 포함된 쿼리문
+	        sql = "SELECT * FROM product_inquiry WHERE inquiry_no = ?";
+	        
+	        pstmt = con.prepareStatement(sql);
+	        pstmt.setInt(1, inquiryNo);
+	        
+	        rs = pstmt.executeQuery();
+	        
+	        if (rs.next()) {
+	            dto = new InquiryDTO();
+	            dto.setInquiry_no(rs.getInt("inquiry_no"));
+	            dto.setCustomer_no(rs.getInt("customer_no"));
+	            dto.setProduct_no(rs.getInt("product_no"));
+	            dto.setContent(rs.getString("content"));
+	            dto.setInquiry_date(rs.getDate("inquiry_date"));
+	            dto.setAnswer_content(rs.getString("answer_content")); // 답변 내용 추가
+	            dto.setAnswer_date(rs.getDate("answer_date"));         // 답변 날짜 추가
+	        }
+	        
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    
+	    } finally {
+	        closeConn(rs, pstmt, con);
+	    }
+	    
+	    return dto;
+	
+	} // getInquiryDetailWithAnswer() end
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+	
+	
+	// 관리자) 1:1문의 답변 삭제
+	public int deleteInquiryAnswer(int inquiryNo) {
+	    int result = 0;
+
+	    try {
+	        openConn();
+	        
+	        sql = "update product_inquiry set answer_content = null, answer_date = null where inquiry_no = ?";
+	        
+	        pstmt = con.prepareStatement(sql);
+	        
+	        pstmt.setInt(1, inquiryNo);
+
+	        result = pstmt.executeUpdate();
+
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    
+	    } finally {
+	        closeConn(pstmt, con);
+	    }
+
+	    return result;
+	}
+	
+	
+//-------------------------------------------------------------------------------------------------------------------------
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }
