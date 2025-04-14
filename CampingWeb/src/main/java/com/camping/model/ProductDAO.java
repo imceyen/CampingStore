@@ -181,6 +181,8 @@ public class ProductDAO {
 
 		return result;
 	} // insertProduct() 메서드 end
+	
+	
 
 	// 전체 상품 목록을 조회하는 메서드.
 	public List<ProductDTO> getProductList() {
@@ -350,20 +352,24 @@ public int deleteProduct(int no) {
 	}
 	
 	// 재고 수량 증가
-	public void increaseRentalStock(String productNo, int qty) throws SQLException {
-		openConn();
+	// ProductDAO.java 안에 있어야 정상 동작함
+	public int increaseRentalStock(String productNo, int qty) {
+	    int result = 0;
+	    openConn();
 	    try {
-
-	        String sql = "UPDATE cam_product SET rental_stock = rental_stock + ? WHERE product_no = ?";
+	        sql = "UPDATE cam_product SET rental_stock = rental_stock + ? WHERE product_no = ?";
 	        pstmt = con.prepareStatement(sql);
 	        pstmt.setInt(1, qty);
-	        pstmt.setString(2, productNo);
-	        pstmt.executeUpdate();
-
+	        pstmt.setInt(2, Integer.parseInt(productNo));
+	        result = pstmt.executeUpdate();
+	    } catch (Exception e) {
+	        e.printStackTrace();
 	    } finally {
 	        closeConn(pstmt, con);
 	    }
+	    return result;
 	}
+
 
 
 	 // updateSequence() 메서드 end
