@@ -43,7 +43,7 @@
 
 	<!-- 카테고리 메뉴 (가로 정렬) -->
 	<section class="max-w-7xl mx-auto px-6 mt-6">
-		<div class="flex justify-center space-x-10 border-b-2  pb-10">
+		<div class="flex justify-center spac-x-10 border-b-2  pb-10">
 			<button class="hover:underline text-lg font-semibold">텐트</button>
 			<button class="hover:underline text-lg font-semibold">코트</button>
 			<button class="hover:underline text-lg font-semibold">체어</button>

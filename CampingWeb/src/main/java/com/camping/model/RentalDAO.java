@@ -10,6 +10,9 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.sql.DataSource;
 
+/**
+ * RentalDAO - 대여 관련 DB 작업을 처리하는 DAO 클래스
+ */
 public class RentalDAO {
     Connection con = null;
     PreparedStatement pstmt = null;
@@ -17,8 +20,11 @@ public class RentalDAO {
     String sql = null;
 
     private static RentalDAO instance = null;
+
+    // 날짜 포맷터 (DB에서 가져온 문자열을 날짜로 변환하기 위함)
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
+    // Singleton 패턴 적용
     private RentalDAO() {}
 
     public static RentalDAO getInstance() {
@@ -28,6 +34,7 @@ public class RentalDAO {
         return instance;
     }
 
+    // DB 연결
     public void openConn() {
         try {
             Context initCtx = new InitialContext();
@@ -39,6 +46,7 @@ public class RentalDAO {
         }
     }
 
+    // DB 리소스 닫기 (ResultSet 포함)
     public void closeConn(ResultSet rs, PreparedStatement pstmt, Connection con) {
         try {
             if (rs != null) rs.close();
@@ -49,6 +57,7 @@ public class RentalDAO {
         }
     }
 
+    // DB 리소스 닫기 (PreparedStatement만)
     public void closeConn(PreparedStatement pstmt, Connection con) {
         try {
             if (pstmt != null) pstmt.close();
@@ -58,6 +67,9 @@ public class RentalDAO {
         }
     }
 
+    /**
+     * 전체 대여 목록 조회 (대여자, 상품 정보 포함)
+     */
     public List<RentalDTO> getRentalList() {
         List<RentalDTO> list = new ArrayList<>();
         openConn();
@@ -95,7 +107,7 @@ public class RentalDAO {
                 dto.setProduct_no(rs.getInt("product_no"));
                 dto.setRental_qty(rs.getInt("rental_qty"));
 
-                // 날짜 파싱 수정
+                // 날짜 변환
                 String rentalDateStr = rs.getString("rental_date");
                 String returnDateStr = rs.getString("return_date");
 
@@ -112,50 +124,33 @@ public class RentalDAO {
                 dto.setName(rs.getString("name"));
                 dto.setProduct_name(rs.getString("product_name"));
 
-                // 남은 일수 계산
+                // 남은 일수 계산 및 상태 처리
                 int remainDays = 0;
                 String status = dto.getRental_status();
                 LocalDate today = LocalDate.now();
 
-             // 남은 일수 계산
                 if (status != null && returnDate != null) {
                     if ("대여중".equals(status.trim())) {
-                        // 대여중일 경우 반납일이 아직 지나지 않으면 남은 일수를 양수로 계산
                         if (returnDate.isAfter(today)) {
-                            remainDays = (int) ChronoUnit.DAYS.between(returnDate, today); // 반납일이 아직 남았으면 양수
-                            dto.setRemaining_days(remainDays);
+                            remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                         } else {
-                            // 반납일이 지나면 연체 상태로 변경
                             dto.setRental_status("연체");
-                            remainDays = (int) ChronoUnit.DAYS.between(today, returnDate); // 연체는 음수로 계산
-                            dto.setRemaining_days(remainDays);
+                            remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                         }
                     } else if ("연체".equals(status.trim())) {
-                        // 연체 상태일 경우, 반납일이 오늘보다 이전이면 음수로 남은 일수를 계산
-                        remainDays = (int) ChronoUnit.DAYS.between(today, returnDate); // 연체는 음수로 계산
+                        remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                     } else if ("반납완료".equals(status.trim())) {
-                        // 반납 완료 상태일 경우 남은 일수는 0
                         remainDays = 0;
-                        dto.setRemaining_days(0);
                     }
                 }
 
-                
-
-            
                 dto.setRemaining_days(remainDays);
-                System.out.println("반납일: " + returnDate + " → 오늘: " + LocalDate.now() + " 남은 일수: " + remainDays + ", 상태: " + dto.getRental_status());
-                
+                System.out.println("반납일: " + returnDate + " → 오늘: " + today + " 남은 일수: " + remainDays + ", 상태: " + dto.getRental_status());
                 list.add(dto);
             }
-            
-         // 남은 일수를 기준으로 오름차순 정렬
-            Collections.sort(list, new Comparator<RentalDTO>() {
-                @Override
-                public int compare(RentalDTO dto1, RentalDTO dto2) {
-                    return Integer.compare(dto1.getRemaining_days(), dto2.getRemaining_days());
-                }
-            });
+
+            // 남은 일수 오름차순 정렬
+            list.sort(Comparator.comparingInt(RentalDTO::getRemaining_days));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,6 +161,9 @@ public class RentalDAO {
         return list;
     }
 
+    /**
+     * 재고 감소 처리 (대여 시)
+     */
     public int decreaseRentalStock(int productNo, int qty) {
         int result = 0;
         openConn();
@@ -184,6 +182,9 @@ public class RentalDAO {
         return result;
     }
 
+    /**
+     * 재고 증가 처리 (반납 시)
+     */
     public int increaseRentalStock(int productNo, int qty) {
         int result = 0;
         openConn();
@@ -201,6 +202,9 @@ public class RentalDAO {
         return result;
     }
 
+    /**
+     * 전체 상품의 대여 재고 현황 조회
+     */
     public List<RentalStockDTO> getRentalStockStatus() {
         List<RentalStockDTO> list = new ArrayList<>();
         openConn();
@@ -240,10 +244,14 @@ public class RentalDAO {
         return list;
     }
 
+    /**
+     * 대여 상태를 반납완료로 변경
+     */
     public int updateRentalStatusToReturned(int rentalNo, int qtyToReturn) {
         int result = 0;
         openConn();
         try {
+            // 현재 수량 조회
             String checkSql = "SELECT rental_qty FROM rental WHERE rental_no = ?";
             pstmt = con.prepareStatement(checkSql);
             pstmt.setInt(1, rentalNo);
@@ -258,17 +266,19 @@ public class RentalDAO {
             pstmt.close();
 
             if (qtyToReturn >= currentQty) {
+                // 전량 반납일 경우 상태 변경
                 sql = "UPDATE rental SET rental_status = '반납완료' WHERE rental_no = ?";
                 pstmt = con.prepareStatement(sql);
                 pstmt.setInt(1, rentalNo);
-                result = pstmt.executeUpdate();
             } else {
+                // 일부 반납일 경우 수량만 감소
                 sql = "UPDATE rental SET rental_qty = rental_qty - ? WHERE rental_no = ?";
                 pstmt = con.prepareStatement(sql);
                 pstmt.setInt(1, qtyToReturn);
                 pstmt.setInt(2, rentalNo);
-                result = pstmt.executeUpdate();
             }
+
+            result = pstmt.executeUpdate();
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -279,6 +289,9 @@ public class RentalDAO {
         return result;
     }
 
+    /**
+     * 특정 상품의 대여중 목록 조회
+     */
     public List<RentalDTO> getRentedListByProduct(String productNo) {
         List<RentalDTO> list = new ArrayList<>();
         openConn();

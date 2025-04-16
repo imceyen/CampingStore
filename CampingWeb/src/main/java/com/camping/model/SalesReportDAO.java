@@ -137,14 +137,16 @@ public class SalesReportDAO {
 
 
 	
+	// 매출 데이터를 포함한 상품 리스트 반환
 	public List<SalesReportDTO> getTotalSalesForChart() {
 	    List<SalesReportDTO> list = new ArrayList<>();
 	    try {
 	        openConn();
 
-	        sql = "SELECT cp.product_name, ss.total_sales " +
-	              "FROM sales_statistics ss " +
-	              "JOIN cam_product cp ON ss.product_no = cp.product_no";
+	        // 모든 상품 기준으로 매출 조회
+	        sql = "SELECT cp.product_name, COALESCE(ss.total_sales, 0) AS total_sales " +
+	              "FROM cam_product cp " +
+	              "LEFT JOIN sales_statistics ss ON cp.product_no = ss.product_no";
 
 	        pstmt = con.prepareStatement(sql);
 	        rs = pstmt.executeQuery();
@@ -164,12 +166,16 @@ public class SalesReportDAO {
 	    return list;
 	}
 	
+	// 매출 리스트에 매출이 없는 상품도 포함
 	public List<SalesReportDTO> getTotalSalesList() {
 	    List<SalesReportDTO> list = new ArrayList<>();
 	    try {
 	        openConn();
-	        sql = "SELECT s.product_no, p.product_name, s.total_sales " +
-	              "FROM sales_statistics s JOIN cam_product p ON s.product_no = p.product_no";
+	        // 매출이 없는 상품도 포함하여 전체 상품을 조회합니다.
+	        sql = "SELECT p.product_no, p.product_name, COALESCE(SUM(s.total_sales), 0) AS total_sales " +
+	              "FROM cam_product p " +
+	              "LEFT JOIN sales_statistics s ON p.product_no = s.product_no " +
+	              "GROUP BY p.product_no, p.product_name";
 
 	        pstmt = con.prepareStatement(sql);
 	        rs = pstmt.executeQuery();
@@ -187,6 +193,7 @@ public class SalesReportDAO {
 	    }
 	    return list;
 	}
+
 
 	public int getTotalSales() {
 	    int total = 0;

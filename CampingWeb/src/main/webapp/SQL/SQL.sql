@@ -477,3 +477,5 @@ INSERT INTO rental (
 
 DELETE FROM rental
 WHERE rental_no = 6;
+
+

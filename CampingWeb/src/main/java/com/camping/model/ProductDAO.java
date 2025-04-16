@@ -147,7 +147,6 @@ public class ProductDAO {
 			// 출고가 기준으로 입고가 계산
 			int inputPrice = dto.getOutput_price() / 2;
 			int rentalUnitPrice = (int) (dto.getOutput_price() * 0.1);
-			
 
 			sql = "INSERT INTO cam_product "
 					+ "(product_no, category_no, product_name, input_price, output_price, stock_qty, "
@@ -181,8 +180,6 @@ public class ProductDAO {
 
 		return result;
 	} // insertProduct() 메서드 end
-	
-	
 
 	// 전체 상품 목록을 조회하는 메서드.
 	public List<ProductDTO> getProductList() {
@@ -264,153 +261,103 @@ public class ProductDAO {
 
 	} // getProductContent() 메서드 end
 
-	// 제품번호에 해당하는 제품의 정보를 수정하는 메서드. 
+	// 제품번호에 해당하는 제품의 정보를 수정하는 메서드.
 	public int updateProduct(ProductDTO dto) {
 
-	int result = 0;
+		int result = 0;
 
-	try
-	{
-		openConn();
+		try {
+			openConn();
 
-		sql = "update cam_product set product_image = ?, product_name = ?, stock_qty = ?, output_price = ?, rental_unit_price = ?, is_sold_out = ?, is_rent_available = ?  where product_no = ?";
+			sql = "update cam_product set product_image = ?, product_name = ?, stock_qty = ?, output_price = ?, rental_unit_price = ?, is_sold_out = ?, is_rent_available = ?  where product_no = ?";
 
-		pstmt = con.prepareStatement(sql);
+			pstmt = con.prepareStatement(sql);
 
-		pstmt.setString(1, dto.getProduct_image());
-		pstmt.setString(2, dto.getProduct_name());
-		pstmt.setInt(3, dto.getStock_qty());
-		pstmt.setInt(4, dto.getOutput_price());
-		pstmt.setInt(5, dto.getRental_unit_price());
-		pstmt.setString(6, dto.getIs_sold_out());
-		pstmt.setString(7, dto.getIs_rent_available());
-		pstmt.setInt(8, dto.getProduct_no());
-		
+			pstmt.setString(1, dto.getProduct_image());
+			pstmt.setString(2, dto.getProduct_name());
+			pstmt.setInt(3, dto.getStock_qty());
+			pstmt.setInt(4, dto.getOutput_price());
+			pstmt.setInt(5, dto.getRental_unit_price());
+			pstmt.setString(6, dto.getIs_sold_out());
+			pstmt.setString(7, dto.getIs_rent_available());
+			pstmt.setInt(8, dto.getProduct_no());
 
-		result = pstmt.executeUpdate();
+			result = pstmt.executeUpdate();
 
-	}catch(
-	SQLException e)
-	{
-		e.printStackTrace();
-	}finally
-	{
-		closeConn(pstmt, con);
-	}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
 
-	return result;} // updateProduct() 메서드 end
+		return result;
+	} // updateProduct() 메서드 end
 
 	// 상품번호에 해당하는 상품을 DB에서 삭제하는 메서드.
-public int deleteProduct(int no) {
+	public int deleteProduct(int no) {
 
-	int result = 0;
+		int result = 0;
 
-	try
-	{
-		openConn();
+		try {
+			openConn();
 
-		sql = "delete from cam_product " + " where product_no = ?";
+			sql = "delete from cam_product " + " where product_no = ?";
 
-		pstmt = con.prepareStatement(sql);
+			pstmt = con.prepareStatement(sql);
 
-		pstmt.setInt(1, no);
+			pstmt.setInt(1, no);
 
-		result = pstmt.executeUpdate();
+			result = pstmt.executeUpdate();
 
-	}catch(
-	SQLException e)
-	{
-		e.printStackTrace();
-	}finally
-	{
-		closeConn(pstmt, con);
-	}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
 
-	return result;} // deleteProduct() 메서드 end
+		return result;
+	} // deleteProduct() 메서드 end
 
 	// 상품 삭제 시 상품번호 재작업 하는 메서드.
 	public void updateSequence(int product_no) {
 
-	try{openConn();
+		try {
+			openConn();
 
-	sql="update cam_product "+" set product_no = product_no - 1 "+" where product_no > ?";
+			sql = "update cam_product " + " set product_no = product_no - 1 " + " where product_no > ?";
 
-	pstmt=con.prepareStatement(sql);
+			pstmt = con.prepareStatement(sql);
 
-	pstmt.setInt(1,product_no);
+			pstmt.setInt(1, product_no);
 
-	pstmt.executeUpdate();
+			pstmt.executeUpdate();
 
-	}catch(
-	SQLException e)
-	{
-		e.printStackTrace();
-	}finally
-	{
-		closeConn(pstmt, con);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
 	}
-	}
-	
+
 	// 재고 수량 증가
 	// ProductDAO.java 안에 있어야 정상 동작함
 	public int increaseRentalStock(String productNo, int qty) {
-	    int result = 0;
-	    openConn();
-	    try {
-	        sql = "UPDATE cam_product SET rental_stock = rental_stock + ? WHERE product_no = ?";
-	        pstmt = con.prepareStatement(sql);
-	        pstmt.setInt(1, qty);
-	        pstmt.setInt(2, Integer.parseInt(productNo));
-	        result = pstmt.executeUpdate();
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	    } finally {
-	        closeConn(pstmt, con);
-	    }
-	    return result;
+		int result = 0;
+		openConn();
+		try {
+			sql = "UPDATE cam_product SET rental_stock = rental_stock + ? WHERE product_no = ?";
+			pstmt = con.prepareStatement(sql);
+			pstmt.setInt(1, qty);
+			pstmt.setInt(2, Integer.parseInt(productNo));
+			result = pstmt.executeUpdate();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			closeConn(pstmt, con);
+		}
+		return result;
 	}
 
-
-
-	 // updateSequence() 메서드 end
-
-	/*
-	 * // 카테고리 코드에 해당하는 제품의 전체 리스트를 // 조회하는 메서드. public List<ProductDTO>
-	 * getProductList(String code) {
-	 * 
-	 * List<ProductDTO> list = new ArrayList<ProductDTO>();
-	 * 
-	 * 
-	 * try { openConn();
-	 * 
-	 * sql = "select * from shop_products " + " where pcategory_fk = ?";
-	 * 
-	 * pstmt = con.prepareStatement(sql);
-	 * 
-	 * pstmt.setString(1, code);
-	 * 
-	 * rs = pstmt.executeQuery();
-	 * 
-	 * while(rs.next()) {
-	 * 
-	 * ProductDTO dto = new ProductDTO();
-	 * 
-	 * dto.setPnum(rs.getInt("pnum")); dto.setPname(rs.getString("pname"));
-	 * dto.setPcategory_fk(rs.getString("pcategory_fk"));
-	 * dto.setPcompany(rs.getString("pcompany"));
-	 * dto.setPimage(rs.getString("pimage")); dto.setPqty(rs.getInt("pqty"));
-	 * dto.setPrice(rs.getInt("price")); dto.setPspec(rs.getString("pspec"));
-	 * dto.setPcontent(rs.getString("pcontents")); dto.setPoint(rs.getInt("point"));
-	 * dto.setPinputdate(rs.getString("pinputdate"));
-	 * 
-	 * list.add(dto);
-	 * 
-	 * }
-	 * 
-	 * } catch (SQLException e) { e.printStackTrace(); } finally { closeConn(rs,
-	 * pstmt, con); }
-	 * 
-	 * return list; } // getProductList() 메서드 end
-	 */	
+	
 
 }
