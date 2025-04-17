@@ -54,8 +54,7 @@ public class SalesReportDAO {
 		}
 	}
 
-	// sales_statistics 테이블에 매출 데이터 계산 후 저장
-	// 대여 매출도 계산하여 sales_statistics에 반영
+	// 상품 매출 및 매입원가 계산 로직
 	public int calculateAndInsertSalesStatistics() {
 	    int result = 0;
 	    try {
@@ -70,6 +69,9 @@ public class SalesReportDAO {
 	            int product_no = rs.getInt("product_no");
 	            int input_price = rs.getInt("input_price");
 	            int output_price = rs.getInt("output_price");
+
+	            // 확인용 로그
+	            System.out.println("product_no: " + product_no + ", input_price: " + input_price + ", output_price: " + output_price);
 
 	            int order_qty = 0;
 	            int total_sales = 0;
@@ -89,7 +91,7 @@ public class SalesReportDAO {
 
 	            // 기본 매출 계산
 	            total_sales = order_qty * output_price;
-	            total_cost = order_qty * input_price;
+	            total_cost = order_qty * input_price; // 판매된 상품의 매입원가만 계산
 	            total_profit = (output_price - input_price) * order_qty;
 
 	            // 대여 매출 조회
@@ -107,6 +109,11 @@ public class SalesReportDAO {
 
 	            total_sales += rental_sales;
 	            total_profit += rental_sales; // 대여 수익은 순이익으로 계산
+
+	            // 대여에는 매입원가가 없으므로 매입원가는 그대로 판매된 상품의 매입원가만 반영
+	            if (rental_sales > 0) {
+	                total_cost += 0; // 대여 매출에는 매입원가가 0으로 반영
+	            }
 
 	            // 기존 데이터 삭제
 	            String deleteSql = "DELETE FROM sales_statistics WHERE product_no = ?";
@@ -133,6 +140,8 @@ public class SalesReportDAO {
 	    }
 	    return result;
 	}
+
+
 
 
 
@@ -270,50 +279,85 @@ public class SalesReportDAO {
 
 	public List<SalesReportDTO> getSalesByGender(String gender) {
 	    List<SalesReportDTO> list = new ArrayList<>();
-
 	    try {
 	        openConn();
 
-	        // 전체일 경우 조건 없이
-	        if (gender.equals("all")) {
-	            sql = "SELECT cp.product_name, " +
-	                  "SUM(od.quantity * cp.output_price) AS total_sales, " +
-	                  "SUM(od.quantity * cp.input_price) AS total_cost, " +
-	                  "SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
-	                  "FROM orders o " +
-	                  "JOIN order_detail od ON o.order_no = od.order_no " +
-	                  "JOIN cam_product cp ON od.product_no = cp.product_no " +
-	                  "JOIN customer c ON o.customer_no = c.customer_no " +
-	                  "GROUP BY cp.product_name";
-	        } else {
-	            sql = "SELECT cp.product_name, " +
-	                  "SUM(od.quantity * cp.output_price) AS total_sales, " +
-	                  "SUM(od.quantity * cp.input_price) AS total_cost, " +
-	                  "SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
-	                  "FROM orders o " +
-	                  "JOIN order_detail od ON o.order_no = od.order_no " +
-	                  "JOIN cam_product cp ON od.product_no = cp.product_no " +
-	                  "JOIN customer c ON o.customer_no = c.customer_no " +
-	                  "WHERE c.gender = ? " +
-	                  "GROUP BY cp.product_name";
+	        // 판매 매출 조회
+	        String orderSql = 
+	            "SELECT cp.product_no, cp.product_name, " +
+	            "SUM(od.quantity * cp.output_price) AS total_sales, " +
+	            "SUM(od.quantity * cp.input_price) AS total_cost, " +
+	            "SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
+	            "FROM orders o " +
+	            "JOIN order_detail od ON o.order_no = od.order_no " +
+	            "JOIN cam_product cp ON od.product_no = cp.product_no " +
+	            "JOIN customer c ON o.customer_no = c.customer_no ";
+
+	        if (!gender.equals("all")) {
+	            orderSql += "WHERE c.gender = ? ";
 	        }
 
-	        pstmt = con.prepareStatement(sql);
+	        orderSql += "GROUP BY cp.product_no, cp.product_name";
 
+	        pstmt = con.prepareStatement(orderSql);
 	        if (!gender.equals("all")) {
 	            pstmt.setString(1, gender);
 	        }
 
 	        rs = pstmt.executeQuery();
+	        Map<Integer, SalesReportDTO> map = new HashMap<>();
 
 	        while (rs.next()) {
 	            SalesReportDTO dto = new SalesReportDTO();
+	            int product_no = rs.getInt("product_no");
 	            dto.setProduct_name(rs.getString("product_name"));
 	            dto.setTotal_sales(rs.getInt("total_sales"));
 	            dto.setTotal_cost(rs.getInt("total_cost"));
 	            dto.setTotal_profit(rs.getInt("total_profit"));
-	            list.add(dto);
+	            map.put(product_no, dto);
 	        }
+
+	        rs.close();
+	        pstmt.close();
+
+	        // 대여 매출 추가
+	        String rentalSql = 
+	            "SELECT r.product_no, SUM(r.rental_price) AS rental_sales " +
+	            "FROM rental r " +
+	            "JOIN customer c ON r.customer_no = c.customer_no ";
+
+	        if (!gender.equals("all")) {
+	            rentalSql += "WHERE c.gender = ? ";
+	        }
+
+	        rentalSql += "GROUP BY r.product_no";
+
+	        pstmt = con.prepareStatement(rentalSql);
+	        if (!gender.equals("all")) {
+	            pstmt.setString(1, gender);
+	        }
+
+	        rs = pstmt.executeQuery();
+	        while (rs.next()) {
+	            int product_no = rs.getInt("product_no");
+	            int rental_sales = rs.getInt("rental_sales");
+
+	            if (map.containsKey(product_no)) {
+	                SalesReportDTO dto = map.get(product_no);
+	                dto.setTotal_sales(dto.getTotal_sales() + rental_sales);
+	                dto.setTotal_profit(dto.getTotal_profit() + rental_sales);
+	            } else {
+	                // 대여만 있는 상품도 포함
+	                SalesReportDTO dto = new SalesReportDTO();
+	                dto.setProduct_name(getProductName(product_no)); // 아래 메서드 참고
+	                dto.setTotal_sales(rental_sales);
+	                dto.setTotal_cost(0); // 대여는 원가 없음
+	                dto.setTotal_profit(rental_sales);
+	                map.put(product_no, dto);
+	            }
+	        }
+
+	        list.addAll(map.values());
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -323,6 +367,22 @@ public class SalesReportDAO {
 
 	    return list;
 	}
+
+	// 보조 메서드: product_no로 product_name 가져오기
+	private String getProductName(int product_no) throws SQLException {
+	    String name = "";
+	    String sql = "SELECT product_name FROM cam_product WHERE product_no = ?";
+	    PreparedStatement ps = con.prepareStatement(sql);
+	    ps.setInt(1, product_no);
+	    ResultSet rs = ps.executeQuery();
+	    if (rs.next()) {
+	        name = rs.getString("product_name");
+	    }
+	    rs.close();
+	    ps.close();
+	    return name;
+	}
+
 
 	public List<SalesReportDTO> getSalesByAgeGroup(int ageGroup) {
 	    List<SalesReportDTO> list = new ArrayList<>();
@@ -344,31 +404,72 @@ public class SalesReportDAO {
 	        int startYear = currentYear - ageGroup - 9;
 	        int endYear = currentYear - ageGroup;
 
-	        sql = "SELECT cp.product_name, " +
-	              "       SUM(od.quantity * cp.output_price) AS total_sales, " +
-	              "       SUM(od.quantity * cp.input_price) AS total_cost, " +
-	              "       SUM((od.quantity * cp.output_price) - (od.quantity * cp.input_price)) AS total_profit " +
-	              "FROM orders o " +
-	              "JOIN order_detail od ON o.order_no = od.order_no " +
-	              "JOIN cam_product cp ON od.product_no = cp.product_no " +
-	              "JOIN customer c ON o.customer_no = c.customer_no " +
-	              "WHERE TO_NUMBER(SUBSTR(TO_CHAR(c.birth_date, 'YYYY-MM-DD'), 1, 4)) BETWEEN ? AND ? " +
-	              "GROUP BY cp.product_name " +
-	              "ORDER BY total_sales DESC";
+	        // 판매 매출 조회
+	        String orderSql = 
+	            "SELECT cp.product_no, cp.product_name, " +
+	            "SUM(od.quantity * cp.output_price) AS total_sales, " +
+	            "SUM(od.quantity * cp.input_price) AS total_cost, " +
+	            "SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
+	            "FROM orders o " +
+	            "JOIN order_detail od ON o.order_no = od.order_no " +
+	            "JOIN cam_product cp ON od.product_no = cp.product_no " +
+	            "JOIN customer c ON o.customer_no = c.customer_no " +
+	            "WHERE TO_NUMBER(SUBSTR(TO_CHAR(c.birth_date, 'YYYY-MM-DD'), 1, 4)) BETWEEN ? AND ? " +
+	            "GROUP BY cp.product_no, cp.product_name";
 
-	        pstmt = con.prepareStatement(sql);
+	        pstmt = con.prepareStatement(orderSql);
+	        pstmt.setInt(1, startYear);
+	        pstmt.setInt(2, endYear);
+
+	        rs = pstmt.executeQuery();
+	        Map<Integer, SalesReportDTO> map = new HashMap<>();
+
+	        while (rs.next()) {
+	            SalesReportDTO dto = new SalesReportDTO();
+	            int product_no = rs.getInt("product_no");
+	            dto.setProduct_name(rs.getString("product_name"));
+	            dto.setTotal_sales(rs.getInt("total_sales"));
+	            dto.setTotal_cost(rs.getInt("total_cost"));
+	            dto.setTotal_profit(rs.getInt("total_profit"));
+	            map.put(product_no, dto);
+	        }
+
+	        rs.close();
+	        pstmt.close();
+
+	        // 대여 매출 추가
+	        String rentalSql = 
+	            "SELECT r.product_no, SUM(r.rental_price) AS rental_sales " +
+	            "FROM rental r " +
+	            "JOIN customer c ON r.customer_no = c.customer_no " +
+	            "WHERE TO_NUMBER(SUBSTR(TO_CHAR(c.birth_date, 'YYYY-MM-DD'), 1, 4)) BETWEEN ? AND ? " +
+	            "GROUP BY r.product_no";
+
+	        pstmt = con.prepareStatement(rentalSql);
 	        pstmt.setInt(1, startYear);
 	        pstmt.setInt(2, endYear);
 
 	        rs = pstmt.executeQuery();
 	        while (rs.next()) {
-	            SalesReportDTO dto = new SalesReportDTO();
-	            dto.setProduct_name(rs.getString("product_name"));
-	            dto.setTotal_sales(rs.getInt("total_sales"));
-	            dto.setTotal_cost(rs.getInt("total_cost"));
-	            dto.setTotal_profit(rs.getInt("total_profit"));
-	            list.add(dto);
+	            int product_no = rs.getInt("product_no");
+	            int rental_sales = rs.getInt("rental_sales");
+
+	            if (map.containsKey(product_no)) {
+	                SalesReportDTO dto = map.get(product_no);
+	                dto.setTotal_sales(dto.getTotal_sales() + rental_sales);
+	                dto.setTotal_profit(dto.getTotal_profit() + rental_sales);
+	            } else {
+	                // 대여만 있는 상품도 포함
+	                SalesReportDTO dto = new SalesReportDTO();
+	                dto.setProduct_name(getProductName(product_no)); // 아래 메서드 참고
+	                dto.setTotal_sales(rental_sales);
+	                dto.setTotal_cost(0); // 대여는 원가 없음
+	                dto.setTotal_profit(rental_sales);
+	                map.put(product_no, dto);
+	            }
 	        }
+
+	        list.addAll(map.values());
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -378,36 +479,77 @@ public class SalesReportDAO {
 
 	    return list;
 	}
+
 	public List<SalesReportDTO> getSalesByDateRange(String startDate, String endDate) {
 	    List<SalesReportDTO> list = new ArrayList<>();
 
 	    try {
 	        openConn();
 
-	        sql = "SELECT cp.product_name, " +
-	              "       SUM(od.quantity * cp.output_price) AS total_sales, " +
-	              "       SUM(od.quantity * cp.input_price) AS total_cost, " +
-	              "       SUM((od.quantity * cp.output_price) - (od.quantity * cp.input_price)) AS total_profit " +
-	              "FROM orders o " +
-	              "JOIN order_detail od ON o.order_no = od.order_no " +
-	              "JOIN cam_product cp ON od.product_no = cp.product_no " +
-	              "WHERE o.order_date BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
-	              "GROUP BY cp.product_name " +
-	              "ORDER BY total_sales DESC";
+	        // 판매 매출 조회
+	        String orderSql = 
+	            "SELECT cp.product_no, cp.product_name, " +
+	            "SUM(od.quantity * cp.output_price) AS total_sales, " +
+	            "SUM(od.quantity * cp.input_price) AS total_cost, " +
+	            "SUM(od.quantity * (cp.output_price - cp.input_price)) AS total_profit " +
+	            "FROM orders o " +
+	            "JOIN order_detail od ON o.order_no = od.order_no " +
+	            "JOIN cam_product cp ON od.product_no = cp.product_no " +
+	            "WHERE o.order_date BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
+	            "GROUP BY cp.product_no, cp.product_name";
 
-	        pstmt = con.prepareStatement(sql);
+	        pstmt = con.prepareStatement(orderSql);
+	        pstmt.setString(1, startDate);
+	        pstmt.setString(2, endDate);
+
+	        rs = pstmt.executeQuery();
+	        Map<Integer, SalesReportDTO> map = new HashMap<>();
+
+	        while (rs.next()) {
+	            SalesReportDTO dto = new SalesReportDTO();
+	            int product_no = rs.getInt("product_no");
+	            dto.setProduct_name(rs.getString("product_name"));
+	            dto.setTotal_sales(rs.getInt("total_sales"));
+	            dto.setTotal_cost(rs.getInt("total_cost"));
+	            dto.setTotal_profit(rs.getInt("total_profit"));
+	            map.put(product_no, dto);
+	        }
+
+	        rs.close();
+	        pstmt.close();
+
+	        // 대여 매출 추가
+	        String rentalSql = 
+	            "SELECT r.product_no, SUM(r.rental_price) AS rental_sales " +
+	            "FROM rental r " +
+	            "WHERE r.rental_date BETWEEN TO_DATE(?, 'YYYY-MM-DD') AND TO_DATE(?, 'YYYY-MM-DD') " +
+	            "GROUP BY r.product_no";
+
+	        pstmt = con.prepareStatement(rentalSql);
 	        pstmt.setString(1, startDate);
 	        pstmt.setString(2, endDate);
 
 	        rs = pstmt.executeQuery();
 	        while (rs.next()) {
-	            SalesReportDTO dto = new SalesReportDTO();
-	            dto.setProduct_name(rs.getString("product_name"));
-	            dto.setTotal_sales(rs.getInt("total_sales"));
-	            dto.setTotal_cost(rs.getInt("total_cost"));
-	            dto.setTotal_profit(rs.getInt("total_profit"));
-	            list.add(dto);
+	            int product_no = rs.getInt("product_no");
+	            int rental_sales = rs.getInt("rental_sales");
+
+	            if (map.containsKey(product_no)) {
+	                SalesReportDTO dto = map.get(product_no);
+	                dto.setTotal_sales(dto.getTotal_sales() + rental_sales);
+	                dto.setTotal_profit(dto.getTotal_profit() + rental_sales);
+	            } else {
+	                // 대여만 있는 상품도 포함
+	                SalesReportDTO dto = new SalesReportDTO();
+	                dto.setProduct_name(getProductName(product_no)); // 아래 메서드 참고
+	                dto.setTotal_sales(rental_sales);
+	                dto.setTotal_cost(0); // 대여는 원가 없음
+	                dto.setTotal_profit(rental_sales);
+	                map.put(product_no, dto);
+	            }
 	        }
+
+	        list.addAll(map.values());
 
 	    } catch (Exception e) {
 	        e.printStackTrace();
@@ -417,6 +559,7 @@ public class SalesReportDAO {
 
 	    return list;
 	}
+
 
 
 }  

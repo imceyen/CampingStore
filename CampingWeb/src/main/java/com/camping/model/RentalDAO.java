@@ -130,15 +130,13 @@ public class RentalDAO {
                 LocalDate today = LocalDate.now();
 
                 if (status != null && returnDate != null) {
+                	remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                     if ("대여중".equals(status.trim())) {
-                        if (returnDate.isAfter(today)) {
-                            remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
-                        } else {
+                        if (remainDays >= 0) {
+                        } else if (remainDays < 0) {
                             dto.setRental_status("연체");
-                            remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                         }
                     } else if ("연체".equals(status.trim())) {
-                        remainDays = (int) ChronoUnit.DAYS.between(today, returnDate);
                     } else if ("반납완료".equals(status.trim())) {
                         remainDays = 0;
                     }
