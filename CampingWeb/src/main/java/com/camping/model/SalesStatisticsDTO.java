@@ -6,6 +6,26 @@ public class SalesStatisticsDTO {
     private int total_sales;
     private int total_cost;
     private int total_profit;
+    private int sold_qty;
+    private int rental_qty;
+    
+    
+    
+    public int getSold_qty() {
+		return sold_qty;
+	}
+
+	public void setSold_qty(int sold_qty) {
+		this.sold_qty = sold_qty;
+	}
+
+	public int getRental_qty() {
+		return rental_qty;
+	}
+
+	public void setRental_qty(int rental_qty) {
+		this.rental_qty = rental_qty;
+	}
     
     
 	public String getProduct_name() {

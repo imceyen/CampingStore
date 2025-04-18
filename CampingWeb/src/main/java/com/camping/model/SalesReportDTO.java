@@ -9,7 +9,28 @@ public class SalesReportDTO {
     private int total_sales;        // 해당 조건에 대한 매출합계
     private int total_profit;       // 해당 조건에 대한 순이익
     private int total_cost;        // 상품별 총 원가 (매입가 * 수량)
-    public int getTotal_cost() {
+    private int sold_qty;
+    private int rental_qty;
+    
+    
+    
+    public int getSold_qty() {
+		return sold_qty;
+	}
+
+	public void setSold_qty(int sold_qty) {
+		this.sold_qty = sold_qty;
+	}
+
+	public int getRental_qty() {
+		return rental_qty;
+	}
+
+	public void setRental_qty(int rental_qty) {
+		this.rental_qty = rental_qty;
+	}
+
+	public int getTotal_cost() {
         return total_cost;
     }
 
